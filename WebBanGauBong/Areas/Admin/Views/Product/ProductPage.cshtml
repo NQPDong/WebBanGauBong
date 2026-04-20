@@ -1,0 +1,424 @@
+﻿
+@{
+    ViewBag.Title = "ProductPage";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+<style>
+
+    .content-card {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        margin-bottom: 30px;
+    }
+
+    .page-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #2C3E50;
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .btn-primary {
+        background: var(--primary-color);
+        border: none;
+        padding: 10px 25px;
+        border-radius: 25px;
+        transition: all 0.3s;
+    }
+
+        .btn-primary:hover {
+            background: #E91E63;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255,64,129,0.3);
+        }
+
+    .table-container {
+        overflow-x: auto;
+    }
+
+    .table {
+        margin-bottom: 0;
+    }
+
+        .table thead {
+            background: #f8f9fa;
+        }
+
+        .table th {
+            font-weight: 600;
+            color: #2C3E50;
+            border-bottom: 2px solid #dee2e6;
+            padding: 15px;
+        }
+        .table thead tr {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+       
+        .table thead th {
+            background-color: transparent !important;
+            font-weight: 600;
+            color: white !important;
+            border-bottom: none; 
+            padding: 15px;
+            white-space: nowrap;
+        }
+        .table td {
+            vertical-align: middle;
+            padding: 15px;
+        }
+
+    .product-img {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: transform 0.3s;
+    }
+
+        .product-img:hover {
+            transform: scale(1.5);
+        }
+
+    .badge {
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-weight: 500;
+    }
+
+    .search-box {
+        position: relative;
+        display: inline-block;
+    }
+
+        .search-box input {
+            padding: 10px 40px 10px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            width: 300px;
+            transition: all 0.3s;
+        }
+
+            .search-box input:focus {
+                border-color: var(--primary-color);
+                outline: none;
+                box-shadow: 0 0 10px rgba(255,64,129,0.2);
+            }
+
+        .search-box i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+
+    .image-preview-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .image-preview {
+        position: relative;
+        width: 80px;
+        height: 80px;
+    }
+
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+        }
+
+    .btn-remove-image {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: #dc3545;
+        color: white;
+        border: none;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        font-size: 12px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 5px;
+    }
+
+    .btn-sm {
+        padding: 5px 10px;
+        border-radius: 5px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .btn-info {
+        background: #17a2b8;
+        color: white;
+    }
+
+        .btn-info:hover {
+            background: #138496;
+        }
+
+    .btn-danger {
+        background: #dc3545;
+        color: white;
+    }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+    .size-badge {
+        display: inline-block;
+        background: #e3f2fd;
+        color: #1976d2;
+        padding: 5px 12px;
+        border-radius: 15px;
+        margin: 3px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .product-images-cell {
+        display: flex;
+        gap: 5px;
+        flex-wrap: wrap;
+    }
+    
+</style>
+@using PagedList;
+@using PagedList.Mvc; 
+@model PagedList<WebBanGauBong.Models.Product>
+
+<!-- Content Card -->
+<div class="content-card" id="products">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="page-title">
+            <i class="fas fa-box"></i> Quản Lý Sản Phẩm
+        </h4>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#productAddModal">
+            <i class="fas fa-plus"></i> Thêm Sản Phẩm
+        </button>
+    </div>
+
+    <!--Phân trang-->
+    <div class="my-3">
+        <nav aria-label="pagination" class="pagination">
+            @Html.PagedListPager(Model, page => Url.Action("ProductPage", "Product", new { page }),
+            new PagedListRenderOptions
+            {
+                DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+                DisplayLinkToLastPage = PagedListDisplayMode.Always,
+                DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+                DisplayLinkToNextPage = PagedListDisplayMode.Always,
+                DisplayPageCountAndCurrentLocation = true,
+                UlElementClasses = new[] { "pagination", "justify-content-center" },
+                LiElementClasses = new[] { "page-item" }
+            })
+        </nav>
+    </div>
+
+    @using (Html.BeginForm("TimKiemSanPham", "Product", FormMethod.Post, new { keyword = "keyword", status = "status", area = "admin", id = "formTimKiem" }))
+    {
+        <div class="mb-3 d-flex justify-content-between align-items-center">
+            <div class="search-box">
+                <input type="text" class="form-control" name="keyword" placeholder="Tìm kiếm tên hoặc mã sản phẩm...">
+                <i class="fas fa-search"></i>
+
+            </div>
+            <div>
+                <select class="form-select" style="width: 200px;" name="status" id="ddlStatus">
+                    <option value="2">Tất cả trạng thái</option>
+                    <option value="1">Đang bán</option>
+                    <option value="0">Ngừng bán</option>
+                </select>
+            </div>
+        </div>
+    }
+
+    <div class="table-container">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Tên Sản Phẩm</th>
+                    <th>Hình Ảnh</th>
+                    <th>Kích Thước & Giá</th>
+                    <th>Tổng Tồn Kho</th>
+                    <th>Trạng Thái</th>
+                    <th>Thao Tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Product  -->
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>#@item.ProductID</td>
+                        <td><strong class="@(item.Isenabled == 0 ? "text-decoration-line-through" : "") ">@item.ProductName</strong></td>
+                        <td>
+                            <div class="product-images-cell ">
+                                @foreach (var image in item.ProductImages)
+                                {
+                                    <img src="@Url.Content("~/Content/Images/" + image.ImageURL)" class="product-img" alt="Product">
+                                }
+
+                            </div>
+                        </td>
+                        <td>
+                            @foreach (var size in item.ProductSize)
+                            {
+
+                                int s = int.Parse(size.SizeName.ToString());
+                                string sizeName = s.ToString();
+                                if (s >= 100)
+                                {
+                                    int soMet = s / 100;
+                                    int soDu = s % 100;
+
+                                    if (soDu == 0)
+                                    {
+                                        sizeName = $"{soMet}m";
+                                    }
+                                    else
+                                    {
+                                        sizeName = $"{soMet}m{soDu.ToString("D2")}";
+                                    }
+                                }
+                                else
+                                {
+                                    sizeName = s.ToString() + "cm";
+                                }
+
+                                <span class="size-badge">@sizeName - @size.Price.Value.ToString("N0")₫ (SL: @size.StockQuantity)</span>
+                            }
+
+                        </td>
+                        <td><strong>@item.ProductSize.Sum(t => t.StockQuantity)</strong></td>
+                        <td>
+                            @if (item.Isenabled == 1)
+                            {
+
+
+                                if (item.ProductSize.Sum(t => t.StockQuantity) > 0)
+                                {
+                                    <span class="badge bg-success">Đang bán</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning">Hết hàng</span>
+                                }
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Tạm ngưng</span>
+                            }
+
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <button type="button" class="btn btn-sm btn-info" title="Chỉnh sửa"
+                                        onclick="loadEditModal(@item.ProductID)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+
+                                @if (item.Isenabled == 1)
+                                {
+                                    <a href="@Url.Action("DisableSanPham", "Product", new {area="admin", productID = item.ProductID, type=0})" class="btn btn-sm btn-warning text-white" title="Disable">
+                                        <i class="fa-solid fa-lock"></i>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a href="@Url.Action("DisableSanPham", "Product", new {area="admin", productID = item.ProductID, type=1})" class="btn btn-sm btn-success text-white" title="Enable">
+                                        <i class="fa-solid fa-lock-open"></i>
+                                    </a>
+                                }
+
+                                <a href="@Url.Action("DeleteSanPham", "Product", new {area="admin", productID = item.ProductID})" class="btn btn-sm btn-danger" title="Xóa">
+                                    <i class="fa-solid fa-trash"></i>
+                                </a>
+
+                            </div>
+                        </td>
+                    </tr>
+
+                }
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="modalContainer"></div>
+
+<script>
+    // Submit selected
+    document.getElementById('ddlStatus').addEventListener('change', function () {
+        document.getElementById('formTimKiem').submit();
+    });
+
+
+</script>
+
+<script>
+    function loadEditModal(id) {
+        $.ajax({
+            url: '/Admin/Product/_ModalSuaSanPham',
+            type: 'GET',
+            data: { productID: id },
+            success: function (res) {
+
+                $('#modalContainer').html(res);
+
+
+                var myModal = new bootstrap.Modal(document.getElementById('productUpdateModal'), {
+                    keyboard: false
+                });
+                myModal.show();
+
+                updateSizeCounter();
+            },
+            error: function () {
+                alert("Lỗi tải dữ liệu sản phẩm.");
+            }
+        });
+    }
+
+    function updateSizeCounter() {
+
+        var inputs = document.querySelectorAll('input[name="ProductSize.Index"]');
+        var max = 0;
+        if (inputs.length > 0) {
+            inputs.forEach(function (input) {
+                var val = parseInt(input.value);
+                if (val > max) max = val;
+            });
+
+            if (typeof setGlobalSizeCounter === "function") {
+                setGlobalSizeCounter(max);
+            }
+        }
+    }
+</script>

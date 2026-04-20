@@ -1,0 +1,330 @@
+﻿
+@{
+    ViewBag.Title = "RegistrationSuccess";
+    WebBanGauBong.Models.Users user = Session["User"] as WebBanGauBong.Models.Users;
+}
+<style>
+    .success-container {
+            max-width: 600px;
+            width: 100%;
+            background: white;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            position: relative;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @@keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header-section {
+            background: linear-gradient(135deg, #ff6b9d 0%, #ff8fab 100%);
+            padding: 40px 20px 60px;
+            text-align: center;
+            position: relative;
+            width: 100%;
+        }
+
+        .decorative-circles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .circle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+        }
+
+        .circle1 {
+            width: 100px;
+            height: 100px;
+            top: -30px;
+            left: -30px;
+        }
+
+        .circle2 {
+            width: 150px;
+            height: 150px;
+            top: -50px;
+            right: -50px;
+        }
+
+        .circle3 {
+            width: 80px;
+            height: 80px;
+            bottom: -20px;
+            left: 50%;
+        }
+
+        .success-icon {
+            width: 120px;
+            height: 120px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 1;
+            animation: bounceIn 0.8s ease-out 0.2s both;
+        }
+
+        @@keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .success-icon i {
+            font-size: 60px;
+            color: #ff6b9d;
+        }
+
+        .header-section h1 {
+            color: white;
+            font-weight: 700;
+            font-size: 32px;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-section p {
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .content-section {
+            padding: 40px 30px;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #fff5f7 0%, #ffe8ee 100%);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 2px solid #ffdbea;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .info-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-item i {
+            color: #ff6b9d;
+            font-size: 20px;
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .info-item .text {
+            flex: 1;
+        }
+
+        .info-item .label {
+            font-size: 13px;
+            color: #999;
+            font-weight: 500;
+            margin-bottom: 3px;
+        }
+
+        .info-item .value {
+            font-size: 16px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn-custom {
+            flex: 1;
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary-custom {
+            background: linear-gradient(135deg, #ff6b9d 0%, #ff8fab 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 107, 157, 0.4);
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 107, 157, 0.5);
+            color: white;
+        }
+
+        .btn-secondary-custom {
+            background: white;
+            color: #ff6b9d;
+            border: 2px solid #ff6b9d;
+        }
+
+        .btn-secondary-custom:hover {
+            background: #ff6b9d;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 107, 157, 0.3);
+        }
+
+        .note {
+            text-align: center;
+            color: #999;
+            font-size: 14px;
+            margin-top: 20px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 15px;
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #ff6b9d;
+            position: absolute;
+            animation: confetti-fall 3s linear;
+            z-index: 0;
+        }
+
+        @@keyframes confetti-fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @@media (max-width: 576px) {
+            .success-container {
+                border-radius: 20px;
+            }
+
+            .header-section {
+                padding: 30px 20px 50px;
+            }
+
+            .header-section h1 {
+                font-size: 26px;
+            }
+
+            .content-section {
+                padding: 30px 20px;
+            }
+
+            .btn-container {
+                flex-direction: column;
+            }
+
+            .success-icon {
+                width: 100px;
+                height: 100px;
+            }
+
+            .success-icon i {
+                font-size: 50px;
+            }
+        }
+</style>
+
+<div class="success-container my-3 mx-auto">
+    <div class="header-section">
+        <div class="decorative-circles">
+            <div class="circle circle1"></div>
+            <div class="circle circle2"></div>
+            <div class="circle circle3"></div>
+        </div>
+        <div class="success-icon">
+            <i class="fas fa-check"></i>
+        </div>
+        <h1>Đăng Ký Thành Công!</h1>
+        <p>Chào mừng bạn đến với gia đình Gấu Bông Cao Cấp</p>
+    </div>
+
+    <div class="content-section">
+        <div class="info-box">
+            <div class="info-item">
+                <i class="fas fa-user"></i>
+                <div class="text">
+                    <div class="label">Tên đăng nhập</div>
+                    <div class="value">@user.Name</div>
+                </div>
+            </div>
+            <div class="info-item">
+                <i class="fas fa-envelope"></i>
+                <div class="text">
+                    <div class="label">Email</div>
+                    <div class="value">@user.Email</div>
+                </div>
+            </div>
+            <div class="info-item">
+                <i class="fas fa-gift"></i>
+                <div class="text">
+                    <div class="label">Phần quà chào mừng</div>
+                    <div class="value">Voucher giảm giá 100.000đ</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="btn-container">
+            <a href="@Url.Action("Index", "Home")" class="btn-custom btn-primary-custom">
+                <i class="fas fa-shopping-bag"></i> Mua Sắm Ngay
+            </a>
+            <a href="@Url.Action("HomePage", "Home")" class="btn-custom btn-secondary-custom">
+                <i class="fas fa-home"></i> Trang Chủ
+            </a>
+        </div>
+
+    </div>
+</div>

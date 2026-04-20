@@ -1,0 +1,31 @@
+﻿
+@{
+    ViewBag.Title = "OrderDetailPage";
+}
+
+@model WebBanGauBong.Models.Orders
+
+<a href="" class="link-index my-4  ">
+    <h3 class="fw-bold">ĐƠN HÀNG</h3>
+</a>
+
+@Html.Action("OrderDetail", "Cart", new { orderID = Model.OrderID })
+
+<!--Chat-->
+<div class="mb-5">
+    <div class="action-buttons">
+        <a href="https://id.zalo.me/account/login?continue=http%3A%2F%2Fzalo.me%2F0967110738" class="btn-social btn-zalo text-decoration-none">
+            <i class="fab fa-facebook-messenger"></i>
+            CHAT ZALO
+        </a>
+        <a href="https://www.messenger.com/login/?next=http%3A%2F%2Fwww.messenger.com%2Ft%2Fgaubongcaocapcom" class="btn-social btn-facebook text-decoration-none">
+            <i class="fab fa-facebook-messenger"></i>
+            CHAT FACEBOOK
+        </a>
+    </div>
+
+    <div style="font-size:12px; font-weight:600; color: #808080;" class="ms-auto">
+        *Hãy Chụp màn hình đơn, <span style="color: #0026ff;">Chat với Shop</span> để được hỗ trợ nhanh hơn
+    </div>
+
+</div>

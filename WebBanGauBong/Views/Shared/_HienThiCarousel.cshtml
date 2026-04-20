@@ -1,0 +1,67 @@
+﻿
+@{
+    ViewBag.Title = "_HienThiCarousel";
+}
+
+<div id="carouselExample" class="carousel carousel-dark slide mb-3" data-bs-ride="carousel">
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <img src="@Url.Content("~/Content/Images/desktop-quay-may-man.jpg")" class="d-block w-100 rounded-bottom " alt="slideVongQuay">
+        </div>
+        <div class="carousel-item">
+            <img src="@Url.Content("~/Content/Images/desktop-slide-1.jpg")" class="d-block w-100 rounded-bottom " alt="slide1">
+        </div>
+        <div class="carousel-item">
+            <img src="@Url.Content("~/Content/Images/desktop-slide-2.jpg")" class="d-block w-100 rounded-bottom " alt="slide2">
+        </div>
+        <div class="carousel-item">
+            <img src="@Url.Content("~/Content/Images/desktop-slide-3.jpg")" class="d-block w-100 rounded-bottom " alt="slide2">
+        </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
+
+<div class="row row-cols-3 w-100">
+    <div class="col">
+        <a href="@Url.Action("TimKiemTheoLoai", "Product", new {id = "thubong"})">
+            <img src="@Url.Content("~/Content/Images/thu-bong-bn.jpg")" alt="hinh" class="mb-2  rounded" height=240 width=430/>
+        </a>
+    </div>
+
+    <div class="col">
+        <a href="@Url.Action("TimKiemTheoLoai", "Product", new {id = "hoathinh"})">
+            <img src="@Url.Content("~/Content/Images/hoat-hinh-bn.jpg")" alt="hinh" class="mb-2 rounded" height=240 width=430/>
+        </a>
+    </div>
+
+    <div class="col">
+        <a href="@Url.Action("TimKiemTheoLoai", "Product", new {id = "sizelon"})">
+            <img src="@Url.Content("~/Content/Images/bigsize-bn.jpg")" alt="hinh" class="mb-2 rounded" height=240 width=430/>
+        </a>
+    </div>
+
+    <div class="col">
+        <a href="@Url.Action("TimKiemTheoLoai", "Product", new {id = "babythree"})">
+            <img src="@Url.Content("~/Content/Images/hottrend-bn.jpg")" alt="hinh" class="mb-2 rounded" height=240 width=430/>
+        </a>
+    </div>
+
+    <div class="col">
+        <a href="@Url.Action("TimKiemTheoLoai", "Product", new {id = "goiom"})">
+            <img src="@Url.Content("~/Content/Images/ngungon-bn.jpg")" alt="hinh" class="mb-2 rounded" height=240 width=430/>
+        </a>
+    </div>
+
+    <div class="col">
+        <a href="@Url.Action("TimKiemTheoLoai", "Product", new {id = "teddy"})">
+            <img src="@Url.Content("~/Content/Images/teddy-bn.jpg")" alt="hinh" class="mb-2 rounded" height=240 width=430/>
+        </a>
+    </div>
+</div>

@@ -1,0 +1,32 @@
+﻿
+@{
+    ViewBag.Title = "HienThiSanPham";
+    WebBanGauBong.Models.Category loai = ViewBag.Loai as WebBanGauBong.Models.Category;
+}
+
+@model List<WebBanGauBong.Models.Product>
+
+<!-- Nội dung sản phẩm -->
+<main class="mx-auto my-4">
+    <a href="#" class="link-index">
+        <h3 class="mb-3"><b>@loai.CategoryName.ToUpper()</b></h3>
+    </a>
+
+    <img src="@Url.Content("~/Content/Images/" + ViewBag.Anh)" alt="thubong" class="rounded-4 mb-4" />
+
+    <div class="row row-cols-5">
+        <!-- Card  -->
+
+        @foreach (var item in Model.Take(20))
+        {
+            @Html.Action("CardSanPham", "Home", new {id = item.ProductID})
+        }
+
+    </div>
+
+    <center>
+        <a href="@Url.Action("TimKiemTheoLoai", "Product", new {id = loai.CategoryID})" class="xemThem btn rounded-pill px-5 py-3 text-center">
+            XEM THÊM <i class="bi bi-chevron-right"></i>
+        </a>
+    </center>
+</main>

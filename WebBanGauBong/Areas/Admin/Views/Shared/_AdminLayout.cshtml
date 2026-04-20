@@ -1,0 +1,101 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Gấu Bông Cao Cấp</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link href="~/Areas/Admin/Data/styles.css" rel="stylesheet" />
+</head>
+<body>
+    <!-- Sidebar -->
+    @{
+        // Lấy controller hiện tại để active menu
+        var controllerObj = ViewContext.RouteData.Values["controller"];
+        string currentController = (controllerObj != null ? controllerObj.ToString() : "").ToLower();
+
+    }
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-paw fa-2x mb-2"></i>
+            <img src="@Url.Content("~/Content/Icons/logo.png")" alt="" height=55 />
+            <h5>Trang Quản Trị</h5>
+        </div>
+        <ul class="sidebar-menu">
+            <li>
+                <a href="@Url.Action("DashboardPage", "Dashboard", new {area="admin"})" class="menu-link @(currentController == "dashboard" ? "active" : "")" data-section="dashboard">
+                    <i class="fas fa-home"></i> Tổng Quan
+                </a>
+            </li>
+            <li>
+                <a href="@Url.Action("ProductPage", "Product", new {area="admin"})" class="menu-link @(currentController == "product" ? "active" : "")">
+                    <i class="fas fa-box"></i> Quản Lý Sản Phẩm
+                </a>
+            </li>
+            @*<li>
+                <a href="#" class="menu-link @(currentController == "category" ? "active" : "")">
+                    <i class="fas fa-tags"></i> Loại Sản Phẩm
+                </a>
+            </li>*@
+            <li>
+                <a href="@Url.Action("OrderPage", "Order", new {area="admin"})" class="menu-link @(currentController == "order" ? "active" : "")">
+                    <i class="fas fa-shopping-cart">
+                    </i> Đơn Hàng
+                </a>
+            </li>
+            @*<li>
+                <a href="#" class="menu-link @(currentController == "user" ? "active" : "")">
+                    <i class="fas fa-users"></i> Khách Hàng
+                </a>
+            </li>*@
+            <li>
+                <a href="@Url.Action("Logout", "Account")" class="menu-link">
+                    <i class="fa fa-sign-out"></i> Đăng Xuất
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div>
+                <button class="mobile-toggle" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h3 class="mb-0 d-inline-block">Chào mừng, <span style="color: var(--primary-color);">@(Session["EmployeeName"].ToString())</span>!</h3>
+            </div>
+            <div>
+                <span class="me-3"><i class="far fa-clock"></i> 15:44:23</span>
+                <span class="badge bg-success">Online</span>
+            </div>
+        </div>
+
+        @RenderBody()
+    </div>
+    @Html.Action("_ModalThemSanPham", "Product")
+
+    <script src="~/Areas/Admin/Data/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="~/Areas/Admin/Data/script.js"></script>
+    <script>
+
+
+        // Toggle Sidebar for Mobile
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('show');
+        }
+
+        // Update Time
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('vi-VN');
+            document.querySelector('.top-bar .far.fa-clock').nextSibling.textContent = ' ' + timeString;
+        }
+        setInterval(updateTime, 1000);
+    </script>
+</body>
+</html>

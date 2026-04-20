@@ -1,0 +1,15 @@
+﻿
+@{
+    ViewBag.Title = "OrderHistory";
+}
+
+@model List<WebBanGauBong.Models.Orders>
+
+<a href="" class="link-index my-4  ">
+    <h3 class="fw-bold">LỊCH SỬ MUA HÀNG</h3>
+</a>
+
+@foreach (var item in Model)
+{
+    @Html.Action("OrderDetail", "Cart", new { orderID = item.OrderID})
+}

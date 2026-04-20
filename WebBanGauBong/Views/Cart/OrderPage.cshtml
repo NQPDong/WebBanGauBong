@@ -1,0 +1,144 @@
+﻿
+@{
+    ViewBag.Title = "OrderPage";
+}
+
+@model WebBanGauBong.Models.Orders
+
+<!-- Modal order -->
+<div class="modal fade" id="orderModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">THANH TOÁN ĐƠN HÀNG</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-5">
+                        @foreach (var item in Model.OrderDetail)
+                        {
+                            <!--San pham-->
+                            <div class="d-flex flex-row">
+                                <img src="@Url.Content("~/Content/Images/" + item.ProductSize.Product.ProductImages.First().ImageURL)" alt="" height=100 class="rounded-4 me-2"/>
+                                <div>
+                                    <h6>@item.ProductSize.Product.ProductName</h6>
+                                    <b>@item.UnitPrice.Value.ToString("N0")</b>
+                                    <p style="font-size: 15px; color: #1c7da8; font-weight: 500;">
+                                        @item.ProductSize.SizeName.ToString()cm
+                                    </p>
+                                    
+                                </div>
+                            </div>
+                        }
+
+
+                    </div>
+
+                    <div class="col-7">
+                        @if (ViewBag.OrderSuccess != null)
+                        {
+                            <div class="alert alert-success" role="alert">
+                                <i class="bi bi-check-circle"></i>
+                                @ViewBag.OrderSuccess
+                            </div>
+                        }
+
+                           
+                            <!--Thông tin người mua-->
+                            <div class="d-flex justify-content-between">
+                                <span>Người mua</span>
+                                <span class="ms-auto">@Model.NameUser <br /> @Model.SDT</span>
+                            </div>
+
+                            <div class="d-flex justify-content-between">
+                                <span>Địa chỉ nhận hàng</span>
+                                <span class="ms-auto">@Model.Address</span>
+                            </div>
+                            <hr />
+                            <div>
+                                <p class="d-flex justify-content-between">
+                                    <span>Tạm tính</span>
+                                    <span class="ms-auto">@Model.TamTinh().ToString("N0")đ</span>
+                                </p>
+                                <p class="d-flex justify-content-between">
+                                    <span>Voucher giảm giá</span>
+                                    <span class="ms-auto">@Model.Discount.GetValueOrDefault().ToString("N0")đ</span>
+                                </p>
+                                <p class="d-flex justify-content-between">
+                                    <span>Phí giao hàng</span>
+                                    <span class="ms-auto">60.000đ</span>
+                                </p>
+                                <p style="font-size: 13px;">Nội thành HCM: hỏa tốc 60p-4h. Ngoại thành HCM: 2-4 ngày</p>
+                            </div>
+                            
+                            <hr />
+                            <!--Tính tiền-->
+                            <div>
+                                <span>Thành tiền</span>
+                                <span class="ms-auto">@( (Model.ThanhTien() + 60000).ToString("N0"))đ</span>
+                            </div>
+                            
+                            <!--Chat-->
+                            <div>
+                                <div class="chat-section">
+                                    <div class="message message-left">
+                                        <div class="avatar">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <div class="message-content">
+                                            <div class="message-bubble">
+                                                <div><strong>Chào Shop,</strong></div>
+                                                <div>Tôi có đơn hàng cần xử lý.</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="message message-right">
+                                        <div class="avatar">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <div class="message-content">
+                                            <div class="message-bubble">
+                                                Cảm ơn A/c đã mua hàng tại Gomi.vn khoảng 15 phút nữa, Shop sẽ gọi Zalo tới SĐT 0933733336 để tổng đơn & Gửi bạn STK. Hãy chat với Shop nếu A/c cần Shop hỗ trợ ưu tiên xử lý đơn sớm hơn nhé.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="action-buttons">
+                                    <a href="https://id.zalo.me/account/login?continue=http%3A%2F%2Fzalo.me%2F0967110738" class="btn-social btn-zalo text-decoration-none">
+                                        <i class="fab fa-facebook-messenger "></i>
+                                        CHAT ZALO
+                                    </a>
+                                    <a href="https://www.messenger.com/login/?next=http%3A%2F%2Fwww.messenger.com%2Ft%2Fgaubongcaocapcom" class="btn-social btn-facebook text-decoration-none">
+                                        <i class="fab fa-facebook-messenger"></i>
+                                        CHAT FACEBOOK
+                                    </a>
+                                </div>
+                            </div>
+                            
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@if (TempData["ShowOrder"] != null && (bool)TempData["ShowOrder"])
+{
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function () {
+
+            if (typeof bootstrap !== 'undefined') {
+                var myModal = new bootstrap.Modal(document.getElementById('orderModal'));
+                myModal.show();
+            } else {
+
+                $('#orderModal').modal('show');
+            }
+        });
+    </script>
+}

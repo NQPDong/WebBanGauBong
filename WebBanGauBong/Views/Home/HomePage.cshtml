@@ -1,0 +1,26 @@
+﻿
+@{
+    ViewBag.Title = "HomePage";
+}
+
+@Html.Partial("_HienThiCarousel")
+
+@Html.Action("SanPhamNoiBat", "Home")
+
+@Html.Partial("_3dSlider")
+
+@Html.Action("HienThiSanPham", "Home", new { id = "hoa", image = "cat-thubong-bn.jpg" })
+
+@Html.Action("HienThiSanPham", "Home", new { id = "stitch", image = "cat-thubong-bn.jpg" })
+
+@Html.Action("HienThiSanPham", "Home", new { id = "capybara", image = "cat-capybara-bn.jpg" })
+
+@Html.Action("HienThiSanPham", "Home", new { id = "hoathinh", image = "cat-gau-hoat-hinh-bn.jpg" })
+
+@Html.Action("HienThiSanPham", "Home", new { id = "2in1", image = "cat-gau-co-men-bn.jpg" })
+
+@Html.Action("HienThiSanPham", "Home", new { id = "teddy", image = "cat-gauteddy-bn.jpg" })
+
+@Html.Action("HienThiSanPham", "Home", new { id = "totnghiep", image = "cat-gau-tot-nghiep-bn.jpg" })
+
+@Html.Action("HienThiSanPham", "Home", new { id = "dai", image = "cat-gaudai-bn.jpg" })

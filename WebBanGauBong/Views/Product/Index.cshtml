@@ -1,0 +1,305 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    List<WebBanGauBong.Models.Category> dsLoai = ViewBag.DanhSachLoaiCon != null ? ViewBag.DanhSachLoaiCon as List<WebBanGauBong.Models.Category> : new List<WebBanGauBong.Models.Category>();
+}
+
+@using PagedList;
+@using PagedList.Mvc;
+@model PagedList<WebBanGauBong.Models.Product>
+
+<div class="row mt-2">
+    <!-- Menu trái -->
+    <aside class="col-md-4 col-lg-3 mb-4">
+        @Html.Action("HienThiMenu", "Product")
+
+    </aside>
+
+    <!--Hiển thị sản phẩm-->
+    <main class="col-md-8 col-lg-9">
+        <a href="" class="link-index">
+            <h3 class="mb-3"><b>@ViewBag.TenLoai</b></h3>
+        </a>
+        @if (ViewBag.DanhSachLoaiCon != null)
+        {
+            <!--Danh sach loai-->
+            <div class="category-slider">
+                <div class="form">
+
+                    @foreach (var item in dsLoai)
+                    {
+
+                        <div class="item">
+                            <div class="content">
+                                <a href="@Url.Action("TimKiemTheoLoai", "Product", new {id=item.CategoryID})">
+                                    <img src="@Url.Content("~/Content/Images/" + item.CategoryImage)" alt="@item.CategoryName">
+                                    <div class="des">
+                                        <div>@item.CategoryName</div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+
+                    }
+
+                </div>
+            </div>
+            <hr />
+        }
+
+        <p style="font-weight: 600;">@Model.Count() sản phẩm</p>
+
+        <div class="row row-cols-4 gx-2 gy-0 mt-2">
+            <!-- Card  -->
+
+            @foreach (var item in Model)
+            {
+                var firstImage = item.ProductImages.FirstOrDefault();
+                var Size = item.ProductSize.ToList();
+                decimal discountRate = item.Discount.Count() != 0 ? (decimal)item.Discount.First().DiscountRate : 0;
+
+                <div class="col">
+                    <div class="card h-100 w-100 mb-2" style="border:none;">
+                        <div class="image-link">
+                            <a href="@Url.Action("Detail", "Product", new {id = item.ProductID})">
+                                <img src="@Url.Content("~/Content/Images/" + firstImage.ImageURL)" class="card-img-top rounded-top-4" alt="@item.ProductName" height=230>
+                                <img src="@Url.Content("~/Content/Images/product-footer.jpg")" alt="khuyến mãi" class="w-100 rounded-bottom-4" height=34 />
+
+                            </a>
+                            <a href="@Url.Action("Detail", "Product", new {id = item.ProductID})" class="btn rounded-4">
+                                <i class="bi bi-bag-plus"></i> <span>Mua Ngay</span>
+                            </a>
+                        </div>
+
+                        @using (Html.BeginForm("AddToCart", "Cart", FormMethod.Post, new { productSizeID = "productSizeID" }))
+                        {
+                            <div class="card-body">
+                                @{
+                                    string priceTargetId = "price-" + item.ProductID;
+                                }
+
+                                <div class="size-scroll-container d-flex flex-nowrap overflow-auto mb-2">
+                                    @{
+                                        int s = int.Parse(Size[0].SizeName.ToString());
+                                        string sizeName = s.ToString();
+                                        if (s >= 100)
+                                        {
+                                            int soMet = s / 100;
+                                            int soDu = s % 100;
+
+                                            if (soDu == 0)
+                                            {
+                                                sizeName = $"{soMet}m";
+                                            }
+                                            else
+                                            {
+                                                sizeName = $"{soMet}m{soDu.ToString("D2")}";
+                                            }
+                                        }
+                                        else
+                                        {
+                                            sizeName = s.ToString() + "cm";
+                                        }
+                                    }
+                                    <button type="button" class="btn btnSizeCard flex-shrink-0 active"
+                                            data-id="@Size[0].ProductSizeID"
+                                            data-price="@Size[0].Price.Value"
+                                            data-target="@priceTargetId"
+                                            data-discount="@discountRate"
+                                            data-size="@sizeName"
+                                            style="--bs-btn-padding-y: .22rem; --bs-btn-padding-x: .4rem; --bs-btn-font-size: .70rem;">
+                                        @Size[0].SizeName.ToString()<span>cm</span>
+                                    </button>
+
+                                    @foreach (var size in Size.Skip(1))
+                                    {
+                                        s = int.Parse(size.SizeName.ToString());
+                                        sizeName = s.ToString();
+                                        if (s >= 100)
+                                        {
+                                            int soMet = s / 100;
+                                            int soDu = s % 100;
+
+                                            if (soDu == 0)
+                                            {
+                                                sizeName = $"{soMet}m";
+                                            }
+                                            else
+                                            {
+                                                sizeName = $"{soMet}m{soDu.ToString("D2")}";
+                                            }
+                                        }
+                                        else
+                                        {
+                                            sizeName = s.ToString() + "cm";
+                                        }
+                                        <button type="button" class="btn btnSizeCard flex-shrink-0"
+                                                data-id="@size.ProductSizeID"
+                                                data-price="@size.Price.Value"
+                                                data-target="@priceTargetId"
+                                                data-discount="@discountRate"
+                                                data-size="@sizeName"
+                                                style="--bs-btn-padding-y: .22rem; --bs-btn-padding-x: .4rem; --bs-btn-font-size: .70rem;">
+                                            @sizeName
+                                        </button>
+                                    }
+                                </div>
+
+                                <h6 class="card-title"><a href="@Url.Action("Detail", "Product", new {id = item.ProductID})">@item.ProductName</a></h6>
+
+                                <div class="d-flex flex-row align-items-center">
+                                    @{
+                                        decimal tienChuaGiam = Size[0].Price.Value;
+                                        if (discountRate != 0)
+                                        {
+                                            decimal tienSauGiam = tienChuaGiam * (100 - discountRate) / 100;
+
+                                            <b id="after-@priceTargetId" style="font-weight:bold;"
+                                               class="text-color-theme me-2">
+                                                @tienSauGiam.ToString("N0")đ
+                                            </b>
+                                            <span class="badge text-bg-secondary p-1 color-theme h-25 me-2">
+                                                -@discountRate%
+                                            </span>
+                                            <span style="text-decoration: line-through; color: #808080; font-size: 13px; font-weight: 600;"
+                                                  id="@priceTargetId">
+                                                @tienChuaGiam.ToString("N0")đ
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <b id="after-@priceTargetId">
+                                                @tienChuaGiam.ToString("N0")đ
+                                            </b>
+                                        }
+                                    }
+                                    <input hidden name="productSizeID" value="@Size[0].ProductSizeID" />
+                                    <!--Nút thêm giỏ hàng-->
+                                    <button type="submit" class="btn rounded-circle ms-auto"><i class="bi bi-bag-plus"></i></button>
+                                </div>
+                            </div>
+
+                        }
+
+                    </div>
+                </div>
+            }
+
+        </div>
+
+        <!--Phân trang-->
+        <div class="my-4">
+            <nav aria-label="pagination" class="pagination">
+                @*<ul class="pagination">
+                        <li>
+                            <a href="">
+                                <span aria-hidden="true">&laquo;</span>
+                                <span class="visuallyhidden">previous set of pages</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href=""><span class="visuallyhidden">page </span>1</a>
+                        </li>
+                        <li>
+                            <a href="" aria-current="page">
+                                <span class="visuallyhidden">page </span>2
+                            </a>
+                        </li>
+                        <li>
+                            <a href=""> <span class="visuallyhidden">page </span>3 </a>
+                        </li>
+                        <li>
+                            <a href=""> <span class="visuallyhidden">page </span>4 </a>
+                        </li>
+                        <li>
+                            <a href="">
+                                <span class="visuallyhidden">next set of pages</span><span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>*@
+
+                @Html.PagedListPager(Model, page => Url.Action("Index", "Product", new { page }),
+                new PagedListRenderOptions
+                {
+                    DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+                    DisplayLinkToLastPage = PagedListDisplayMode.Always,
+                    DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+                    DisplayLinkToNextPage = PagedListDisplayMode.Always,
+                    DisplayPageCountAndCurrentLocation = true,
+                    UlElementClasses = new[] { "pagination", "justify-content-center" },
+                    LiElementClasses = new[] { "page-item" }
+                })
+            </nav>
+
+
+        </div>
+
+
+
+
+    </main>
+
+</div>
+
+<script>
+    let slider = document.querySelector('.category-slider');
+    let form = document.querySelector('.form');
+    let mouseDownAt = 0;
+    let left = 0;
+
+    let isDragging = false;
+
+    slider.onmousedown = (e) => {
+        mouseDownAt = e.clientX;
+        isDragging = false;
+        slider.style.cursor = 'grabbing';
+    }
+
+    slider.onmouseup = () => {
+        mouseDownAt = 0;
+        slider.style.cursor = 'grab';
+
+        form.style.pointerEvents = 'auto';
+
+        form.classList.remove('left');
+        form.classList.remove('right');
+    }
+
+    slider.onmousemove = e => {
+        if (mouseDownAt == 0) return;
+
+        isDragging = true;
+
+        form.style.pointerEvents = 'none';
+
+        if (e.clientX > mouseDownAt) {
+            form.classList.add('left');
+            form.classList.remove('right');
+        } else if (e.clientX < mouseDownAt) {
+            form.classList.add('right');
+            form.classList.remove('left');
+        }
+
+        let speed = 1;
+        let leftTemporary = left + ((e.clientX - mouseDownAt) / speed);
+
+        let leftLimit = form.offsetWidth - slider.offsetWidth;
+
+        if (leftLimit < 0) leftLimit = 0;
+
+        if (leftTemporary <= 0 && Math.abs(leftTemporary) <= leftLimit) {
+            form.style.setProperty('--left', leftTemporary + 'px'); // Dùng leftTemporary thay vì left cũ
+            left = leftTemporary;
+            mouseDownAt = e.clientX;
+        }
+    }
+
+    const links = document.querySelectorAll('.form a');
+    links.forEach(link => {
+        link.addEventListener('click', (e) => {
+            if (isDragging) {
+                e.preventDefault();
+            }
+        });
+    });
+</script>

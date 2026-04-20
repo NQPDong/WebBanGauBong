@@ -1,0 +1,108 @@
+﻿@{
+    ViewBag.Title = "_Menu";
+    List<string> checkedLoaiList = TempData["CheckedLoai"] as List<string>;
+    int GiaMax = TempData["GiaMax"] != null ? (int)TempData["GiaMax"] : 3000000;
+    int GiaMin = TempData["GiaMin"] != null ? (int)TempData["GiaMin"] : 10000;
+    List<int> buttonSizeClicked = Session["Sizes"] as List<int>;
+    if (checkedLoaiList == null)
+    {
+        checkedLoaiList = new List<string>();
+    }
+}
+
+@model List<WebBanGauBong.Models.Category>
+
+@using (Html.BeginForm("TimKiemNangCao", "Product", FormMethod.Post, new { id = "filterForm" }))
+{
+    <div id="scroll-menu">
+        <!--Range slider-->
+        <div>
+            <div class="row slider-labels mb-1">
+                <div class="col-xs-6 caption">
+                    <p style="font-size: 14px; font-weight: 500; color: #ababab">Lọc theo giá: <span id="slider-range-value1" style="color: #1240f0"></span> - <span id="slider-range-value2" style="color: #1240f0"></span></p>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-10 ms-2">
+                    <div id="slider-range"></div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <input type="hidden" name="min-value" value="@GiaMin">
+                    <input type="hidden" name="max-value" value="@GiaMax">
+                </div>
+            </div>
+        </div>
+
+        <!--Kich thuoc-->
+        <div class="mt-3 button-list">
+            <p style="font-size: 14px; font-weight: 500; color: #ababab">Kích thước</p>
+            <div class="row row-cols-4 mt-1 ms-2">
+                @foreach (var item in ViewBag.KichThuocNut)
+                {
+                    string sizeName;
+
+                    if (item >= 100)
+                    {
+                        int soMet = item / 100;
+                        int soDu = item % 100;
+
+                        if (soDu == 0)
+                        {
+                            sizeName = $"{soMet}m";
+                        }
+                        else
+                        {
+                            sizeName = $"{soMet}m{soDu.ToString("D2")}";
+                        }
+                    }
+                    else
+                    {
+                        sizeName = item + "cm";
+                    }
+
+                    <button class="btn btn-outline-secondary col button-size @(buttonSizeClicked != null && buttonSizeClicked.Contains(item) ? "active" : "")"
+                            name="size" type="submit" value="@item">
+                        @sizeName
+                    </button>
+                }
+            </div>
+        </div>
+
+        <!--Menu loại-->
+        <div class="mt-4 menu-loai">
+            <p style="font-size: 14px; font-weight: 500; color: #ababab">Danh mục sản phẩm</p>
+            <ul class="list-group">
+
+                @foreach (var item in Model)
+                {
+                    bool isChecked = false;
+                    if (checkedLoaiList.Contains(item.CategoryID.ToString()))
+                    {
+                        isChecked = true;
+                    }
+
+                    <li class="list-group-item" style="border:none;">
+
+                        <input type="checkbox"
+                               class="checkbox-round" id="@item.CategoryID"
+                               value="@item.CategoryID"
+                               name="loai"
+                               @if (isChecked == true) { <text> checked </text> } />
+                        <label for="@item.CategoryID" class="checkbox-label"
+                               style="font-size: 14px; font-weight: 500; color: #565656;">
+                            @item.CategoryName
+                        </label>
+
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+
+}
+
+

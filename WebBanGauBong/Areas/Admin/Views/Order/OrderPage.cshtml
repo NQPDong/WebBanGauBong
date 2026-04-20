@@ -1,0 +1,317 @@
+﻿@{
+    ViewBag.Title = "OrderPage";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .content-card {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        margin-bottom: 30px;
+    }
+
+    .page-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #2C3E50;
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .btn-primary {
+        background: var(--primary-color);
+        border: none;
+        padding: 10px 25px;
+        border-radius: 25px;
+        transition: all 0.3s;
+    }
+
+        .btn-primary:hover {
+            background: #E91E63;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255,64,129,0.3);
+        }
+
+    .table-container {
+        overflow-x: auto;
+    }
+
+    .table {
+        margin-bottom: 0;
+    }
+
+        .table thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .table th {
+            font-weight: 600;
+            color: white !important;
+            border-bottom: 2px solid #dee2e6;
+            padding: 15px;
+            white-space: nowrap;
+        }
+
+        .table thead tr {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .table thead th {
+            background-color: transparent !important;
+            font-weight: 600;
+            color: white !important;
+            border-bottom: none;
+            padding: 15px;
+            white-space: nowrap;
+        }
+
+        .table td {
+            vertical-align: middle;
+            padding: 15px;
+        }
+
+        .table tbody tr {
+            transition: all 0.3s;
+        }
+
+            .table tbody tr:hover {
+                background: #f8f9fa;
+                transform: scale(1.01);
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            }
+
+    .badge {
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-weight: 500;
+        font-size: 13px;
+    }
+
+    .search-box {
+        position: relative;
+        display: inline-block;
+    }
+
+        .search-box input {
+            padding: 12px 45px 12px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            width: 350px;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+            .search-box input:focus {
+                border-color: var(--primary-color);
+                outline: none;
+                box-shadow: 0 0 15px rgba(255,64,129,0.3);
+            }
+
+        .search-box i {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            font-size: 16px;
+        }
+
+    .action-buttons {
+        display: flex;
+        gap: 8px;
+    }
+
+    .btn-sm {
+        padding: 8px 12px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .btn-info {
+        background: #17a2b8;
+        color: white;
+    }
+
+        .btn-info:hover {
+            background: #138496;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(23,162,184,0.4);
+        }
+
+
+    .filter-section {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 15px;
+        margin-bottom: 20px;
+    }
+
+    .filter-select {
+        padding: 10px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        width: 200px;
+        transition: all 0.3s;
+    }
+
+        .filter-select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 10px rgba(255,64,129,0.2);
+        }
+</style>
+@using PagedList;
+@using PagedList.Mvc;
+@model PagedList<WebBanGauBong.Models.Orders>
+
+<!-- Content Card -->
+<div class="content-card" id="products">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="page-title">
+            <i class="fas fa-shopping-cart"></i> Quản Lý Đơn Hàng
+        </h4>
+    </div>
+
+    <!--Phân trang-->
+    <div class="my-3">
+        <nav aria-label="pagination" class="pagination">
+            @Html.PagedListPager(Model, page => Url.Action("OrderPage", "Order", new { page }),
+            new PagedListRenderOptions
+            {
+                DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+                DisplayLinkToLastPage = PagedListDisplayMode.Always,
+                DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+                DisplayLinkToNextPage = PagedListDisplayMode.Always,
+                DisplayPageCountAndCurrentLocation = true,
+                UlElementClasses = new[] { "pagination", "justify-content-center" },
+                LiElementClasses = new[] { "page-item" }
+            })
+        </nav>
+    </div>
+
+    @using (Html.BeginForm("TimKiemDonHang", "Order", FormMethod.Post, new { area = "admin", id = "formTimKiem" }))
+    {
+        <div class="filter-section">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <div class="search-box">
+                        <input type="text" class="form-control" name="keyword" placeholder="Tìm kiếm theo mã đơn, tên khách hàng...">
+                        <i class="fas fa-search"></i>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <select class="filter-select" name="status" id="ddlStatus">
+                        <option value="">Tất cả trạng thái</option>
+                        <option value="Đang chờ xác nhận">Đang chờ xác nhận</option>
+                        <option value="Đã xác nhận">Đã xác nhận</option>
+                        <option value="Đang giao">Đang giao</option>
+                        <option value="Đã giao">Đã giao</option>
+                        <option value="Đã hủy">Đã hủy</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="table-container">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Mã ĐH</th>
+                    <th>Khách Hàng</th>
+                    <th>Ngày Đặt</th>
+                    <th>Địa Chỉ</th>
+                    <th>Thanh Toán</th>
+                    <th>SĐT</th>
+                    <th>Người Nhận</th>
+                    <th>Giảm Giá</th>
+                    <th>Trạng Thái</th>
+                    <th>Thao Tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td><strong>#@item.OrderID</strong></td>
+                        <td>@item.Users.Name</td>
+                        <td>
+                            <i class="fa-solid fa-calendar me-1"></i>
+                            @item.OrderDate.Value.ToString("dd/MM/yyyy")
+                        </td>
+                        <td>@item.Address</td>
+                        <td>@item.UserPaymentMethod</td>
+                        <td>@item.SDT</td>
+                        <td>@item.NameUser</td>
+                        <td>@item.Discount.Value.ToString("N0")</td>
+                        <td>
+                            @if (item.Status.Equals("Đã hủy"))
+                            {
+                                <span class="badge bg-danger">@item.Status</span>
+                            }
+                            else if (item.Status.Equals("Đã giao"))
+                            {
+                                <span class="badge bg-success">@item.Status</span>
+                            }
+                            else if (item.Status.Equals("Đang giao"))
+                            {
+                                <span class="badge bg-info">@item.Status</span>
+                            }
+                            else if (item.Status.Equals("Đã xác nhận"))
+                            {
+                                <span class="badge bg-primary">@item.Status</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning text-dark">@item.Status</span>
+                            }
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <button type="button" class="btn btn-sm btn-info" title="Chi tiết & Chỉnh sửa"
+                                        onclick="loadEditModal(@item.OrderID)">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="modalContainer"></div>
+
+<script>
+    // Submit on status change
+    document.getElementById('ddlStatus').addEventListener('change', function () {
+        document.getElementById('formTimKiem').submit();
+    });
+
+    function loadEditModal(id) {
+        $.ajax({
+            url: '/Admin/Order/_ModalSuaOrder',
+            type: 'GET',
+            data: { orderID: id },
+            success: function (res) {
+                $('#modalContainer').html(res);
+                var myModal = new bootstrap.Modal(document.getElementById('orderEditModal'), {
+                    keyboard: false
+                });
+                myModal.show();
+            },
+            error: function () {
+                alert("Lỗi tải dữ liệu đơn hàng.");
+            }
+        });
+    }
+</script>

@@ -1,0 +1,67 @@
+﻿@model List<WebBanGauBong.Models.Product>
+
+@{
+    ViewBag.Title = "SanPhamNoiBat";
+}
+
+<style>
+    /* Giữ nguyên phần CSS của bạn ở đây */
+    .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+        .container .box {
+            position: relative;
+            width: 320px;
+            height: 400px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 40px 30px;
+            transition: 0.5s;
+        }
+            /* ... (Phần CSS còn lại bạn giữ nguyên nhé) ... */
+            .container .box .content img {
+                width: 100%;
+                height: auto;
+                object-fit: cover;
+                border-radius: 10px;
+            }
+</style>
+
+<main class="mx-auto my-4">
+    <a href="#" class="link-index">
+        <h3 class="mb-3"><b>SẢN PHẨM NỔI BẬT</b></h3>
+    </a>
+
+    <div class="container">
+        @if (Model != null && Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                <div class="box">
+                    <span></span>
+                    <div class="content">
+                        @if (item.ProductImages != null && item.ProductImages.Any())
+                        {
+                            <img src="@Url.Content("~/Content/Images/" + item.ProductImages.First().ImageURL)" alt="@item.ProductName" />
+                        }
+                        else
+                        {
+                            <img src="@Url.Content("~/Content/Images/no-image.png")" alt="No Image" />
+                        }
+                        <p>@item.ProductName</p>
+                        <a href="@Url.Action("Detail", "Product", new { id = item.ProductID })">Chi tiết</a>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <p class="text-center">Hiện chưa có sản phẩm nổi bật nào.</p>
+        }
+    </div>
+</main>

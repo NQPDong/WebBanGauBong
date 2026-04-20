@@ -1,0 +1,432 @@
+﻿
+@{
+    ViewBag.Title = "LoginPage";
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng Nhập Admin - Gấu Bông Cao Cấp</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .background-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(255, 64, 129, 0.85), rgba(123, 104, 238, 0.85)),
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><rect fill="%23FF4081" width="1200" height="800"/></svg>');
+            background-size: cover;
+            background-position: center;
+            filter: blur(0px);
+            z-index: 1;
+        }
+
+        /* Animated plushie pattern overlay */
+        .pattern-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                radial-gradient(circle at 20% 30%, rgba(255, 182, 193, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(221, 160, 221, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(173, 216, 230, 0.3) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+            z-index: 2;
+        }
+
+        @@keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .login-container {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-box {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 30px;
+            padding: 50px 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 450px;
+            backdrop-filter: blur(10px);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @@keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo-section {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .logo-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #FF4081, #7B68EE);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 10px 25px rgba(255, 64, 129, 0.3);
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @@keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .logo-icon i {
+            font-size: 40px;
+            color: white;
+        }
+
+        .login-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2C3E50;
+            margin-bottom: 10px;
+        }
+
+        .login-subtitle {
+            color: #7B68EE;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+            width: 100%;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #2C3E50;
+            margin-bottom: 10px;
+            display: block;
+            font-size: 14px;
+        }
+
+        .input-group-custom {
+            position: relative;
+        }
+
+        .input-group-custom i {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #FF4081;
+            font-size: 18px;
+            z-index: 10;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 15px 15px 15px 50px;
+            border: 2px solid #E8E8E8;
+            border-radius: 15px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-control:focus {
+            border-color: #FF4081;
+            box-shadow: 0 0 0 0.25rem rgba(255, 64, 129, 0.15);
+            outline: none;
+        }
+
+        .form-control::placeholder {
+            color: #B0B0B0;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 50px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #999;
+            z-index: 10;
+            transition: all 0.3s;
+            background: transparent;
+            border: none;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .password-toggle:hover {
+            color: #FF4081;
+            background: rgba(255, 64, 129, 0.1);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #FF4081, #F50057);
+            border: none;
+            border-radius: 15px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(255, 64, 129, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-login:hover {
+            background: linear-gradient(135deg, #F50057, #C51162);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(255, 64, 129, 0.4);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        
+        /* Floating decorative elements */
+        .floating-plushie {
+            position: fixed;
+            z-index: 5;
+            opacity: 0.8;
+            animation: floatRandom 8s ease-in-out infinite;
+        }
+
+        .plushie-1 {
+            top: 10%;
+            left: 5%;
+            font-size: 60px;
+            animation-delay: 0s;
+        }
+
+        .plushie-2 {
+            top: 70%;
+            right: 8%;
+            font-size: 50px;
+            animation-delay: 2s;
+        }
+
+        .plushie-3 {
+            bottom: 15%;
+            left: 10%;
+            font-size: 45px;
+            animation-delay: 4s;
+        }
+
+        .plushie-4 {
+            bottom: 55%;
+            left: 10%;
+            font-size: 45px;
+            animation-delay: 1s;
+        }
+
+        .plushie-5 {
+            bottom: 85%;
+            left: 40%;
+            font-size: 70px;
+            animation-delay: 0.5s;
+        }
+
+        .plushie-6 {
+            bottom: 65%;
+            left: 90%;
+            font-size: 45px;
+            animation-delay: 5s;
+        }
+
+        .plushie-7 {
+            bottom: 40%;
+            left: 70%;
+            font-size: 45px;
+            animation-delay: 0.9s;
+        }
+
+        @@keyframes floatRandom {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(20px, -20px) rotate(5deg); }
+            50% { transform: translate(-15px, 15px) rotate(-5deg); }
+            75% { transform: translate(15px, 10px) rotate(3deg); }
+        }
+
+        @@media (max-width: 576px) {
+            .login-box {
+                padding: 40px 25px;
+            }
+
+            .login-title {
+                font-size: 24px;
+            }
+
+            .logo-icon {
+                width: 70px;
+                height: 70px;
+            }
+
+            .logo-icon i {
+                font-size: 35px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background with blur effect -->
+    <div class="background-overlay"></div>
+    <div class="pattern-overlay"></div>
+
+    <!-- Floating decorative plushies -->
+    <div class="floating-plushie plushie-1">🧸</div>
+    <div class="floating-plushie plushie-2">🐻</div>
+    <div class="floating-plushie plushie-3">🐰</div>
+    <div class="floating-plushie plushie-4">🦄</div>
+    <div class="floating-plushie plushie-5">🐷</div>
+    <div class="floating-plushie plushie-6">🐇</div>
+    <div class="floating-plushie plushie-7">🐧</div>
+
+    <!-- Login Container -->
+    <div class="login-container">
+        <div class="login-box">
+            <!-- Logo Section -->
+            <div class="logo-section">
+                <div class="logo-icon">
+                    <i class="fas fa-paw"></i>
+                </div>
+                <h1 class="login-title">GẤU BÔNG CAO CẤP</h1>
+                <p class="login-subtitle">Trang Quản Trị Admin</p>
+            </div>
+
+            <!-- Login Form -->
+            @using (Html.BeginForm("Login", "Account", FormMethod.Post, new { area = "admin", id = "loginForm" }))
+            {
+                @Html.ValidationSummary(true, "", new { @class = "alert alert-danger alert-custom mb-4" })
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-user-shield"></i> Tên Đăng Nhập
+                    </label>
+                    <div class="input-group-custom">
+                        <i class="fas fa-user"></i>
+                        <input type="text" name="username" class="form-control mx-auto" placeholder="Nhập tên đăng nhập" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-lock"></i> Mật Khẩu
+                    </label>
+                    <div class="input-group-custom">
+                        <i class="fas fa-key"></i>
+                        <input type="password" class="form-control mx-auto" name="password" id="password" placeholder="Nhập mật khẩu" required>
+                        <button type="button" class="password-toggle" id="togglePassword">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                if (ViewBag.Error != null)
+                {
+                    <div class="alert alert-danger alert-custom d-flex align-items-center mt-3" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <div>@ViewBag.Error</div>
+                    </div>
+                }
+
+                <button type="submit" class="btn-login">
+                    <i class="fas fa-sign-in-alt"></i> Đăng Nhập
+                </button>
+            }
+
+
+
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Toggle password visibility
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+
+        togglePassword.addEventListener('click', function () {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+
+            // Toggle icon
+            const icon = this.querySelector('i');
+            icon.classList.toggle('fa-eye');
+            icon.classList.toggle('fa-eye-slash');
+        });
+
+        // Form submission
+        document.getElementById('loginForm').addEventListener('submit', function (e) {
+            
+            const btn = this.querySelector('.btn-login');
+
+            if (btn.disabled) return;
+
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang đăng nhập...';
+            btn.disabled = true;
+        });
+
+        // Add animation on input focus
+        document.querySelectorAll('.form-control').forEach(input => {
+            input.addEventListener('focus', function () {
+                this.parentElement.style.transform = 'scale(1.02)';
+                this.parentElement.style.transition = 'all 0.3s ease';
+            });
+
+            input.addEventListener('blur', function () {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+        });
+
+
+    </script>
+</body>
+</html>

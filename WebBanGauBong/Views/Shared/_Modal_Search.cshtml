@@ -1,0 +1,59 @@
+﻿
+@{
+    ViewBag.Title = "_Modal_Search";
+}
+
+
+<!-- Modal của Search bar -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content" style="background-color: rgba(0, 0, 0, 0) !important;border: none;">
+            <!--Main search bar-->
+            <div class="main-search-container">
+                <div class="search-wrapper">
+                    <div class="search-header">
+                        @using (Html.BeginForm("TimKiemTheoTen", "Product", FormMethod.Post, new { name = "name" }))
+                        {
+                            <div class="search-input-group">
+                                <input type="text" class="search-input form-control " placeholder="Tìm kiếm sản phẩm..." name="name">
+                                <i class="fas fa-search search-icon"></i>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+
+                        }
+
+                    </div>
+
+                    <div class="category-filters ms-5">
+                        <div class="ms-2">Từ khóa nổi bật</div>
+                        <a href="@Url.Action("TimKiemTheoTen", "Product", new {name="Hoa Hồng"})" class="filter-chip">
+                            Hoa Hồng Khổng Lồ
+                        </a>
+                        <a href="@Url.Action("TimKiemTheoTen", "Product", new {name="Dưa Hấu"})" class="filter-chip">
+                            Gấu Bông Dưa Hấu
+                        </a>
+                        <a href="@Url.Action("TimKiemTheoTen", "Product", new {name="Hươu Cao Cổ"})" class="filter-chip">
+                            Gấu Bông Hươu Cao Cổ
+                        </a>
+                        <a href="@Url.Action("TimKiemTheoTen", "Product", new {name="Stitch"})" class="filter-chip">
+                            Gấu Bông Stitch
+                        </a>
+                        <a href="@Url.Action("TimKiemTheoTen", "Product", new {name="Capybara"})" class="filter-chip">
+                            Gấu Bông Capybara
+                        </a>
+                        <a href="@Url.Action("TimKiemTheoTen", "Product", new {name="Heo"})" class="filter-chip">
+                            Heo Bông
+                        </a>
+                        <a href="@Url.Action("TimKiemTheoTen", "Product", new {name="Mèo"})" class="filter-chip">
+                            Mèo Bông
+                        </a>
+
+
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>

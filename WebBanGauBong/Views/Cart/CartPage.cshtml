@@ -1,0 +1,275 @@
+﻿
+@{
+    ViewBag.Title = "CartPage";
+    List<WebBanGauBong.Models.ShoppingCartItem> dsItem = Model.ShoppingCartItem != null ? Model.ShoppingCartItem.ToList() : new List<WebBanGauBong.Models.ShoppingCartItem>();
+}
+
+@model WebBanGauBong.Models.ShoppingCart
+
+<!-- Modal giỏ hàng -->
+<div class="modal" id="cartModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">THANH TOÁN ĐƠN HÀNG</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-5">
+                        @foreach (var item in dsItem)
+                        {
+                            <!--San pham-->
+                            <div class="d-flex flex-row mb-3">
+                                <img src="@Url.Content("~/Content/Images/" + item.ProductSize.Product.ProductImages.First().ImageURL)" alt="" height=120 class="rounded-3 me-2" />
+                                <div class="w-100">
+                                    <h6>@item.ProductSize.Product.ProductName</h6>
+                                    <b>@item.UnitPrice.Value.ToString("N0")đ</b>
+                                    <button type="button" class="btn btnSizeCard flex-shrink-0"
+                                            data-price="50"
+                                            data-target="50"
+                                            data-discount="50"
+                                            data-size="50"
+                                            style="--bs-btn-padding-y: .22rem; --bs-btn-padding-x: .4rem; --bs-btn-font-size: .70rem;">
+                                        @item.ProductSize.SizeName.ToString()cm
+                                    </button>
+                                    <!--Chỉnh sửa sản phẩm trong giỏ-->
+                                    <div class="d-flex justify-content-between w-100">
+                                        <!--Xoa-->
+                                        <a href="@Url.Action("DeleteProductInCart", "Cart", new {productSizeID=item.ProductSizeID})" class="btn btn-secondary rounded-circle align-items-center px-3">
+                                            <i class="bi bi-trash-fill fs-5"></i>
+                                        </a>
+
+                                        <div class="d-flex justify-content-between ms-auto align-items-center rounded-pill p-1" style="border: 1px solid var(--primary-color); width: 120px;">
+                                            <a href="@Url.Action("UpdateQuantity", "Cart", new {productSizeID = item.ProductSizeID, type=-1})" class="btn rounded-circle light-color-theme" style="color: var(--primary-color)">-</a>
+
+                                            <span class="text-color-theme">@item.Quantity</span>
+
+                                            <a href="@Url.Action("UpdateQuantity", "Cart", new {productSizeID = item.ProductSizeID, type=1})" class="btn rounded-circle light-color-theme" style="color: var(--primary-color)">+</a>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        }
+
+
+                    </div>
+
+                    <div class="col-7">
+                        @using (Html.BeginForm("DatHangOnSubmit", "Cart", FormMethod.Post))
+                        {
+                            <div class="notifications">
+
+                            </div>
+
+                            <div class="d-flex align-items-center light-color-theme rounded-2 p-1">
+                                <img src="@Url.Content("~/Content/Icons/giftbox.png")" alt="" height=26 class="me-2" />
+                                <span class="text-color-theme">Tích điểm 3%/ĐH đã mua</span>
+                                <button style="font-size: 13px;" class="btn color-theme rounded-pill ms-auto p-1 text-white" data-bs-toggle="modal" data-bs-target="#tichDiemModal">Xem thêm</button>
+                            </div>
+
+                            <!--Thông tin người mua-->
+                            <div class="d-flex flex-row my-2">
+                                <input type="text" class="form-control me-2" name="name" placeholder="Họ và Tên *" required>
+                                <input type="text" class="form-control" name="sdt" placeholder="Số điện thoại *" required>
+                            </div>
+
+                            <div class="form-check form-switch my-2">
+                                <input class="form-check-input" type="checkbox" role="switch" id="switchCheckDefault" data-bs-toggle="collapse" data-bs-target="#collapseExample">
+                                <label class="form-check-label" for="switchCheckDefault">Gửi Tặng Quà cho người khác?</label>
+                            </div>
+                            <div class="collapse" id="collapseExample">
+                                <!--Thông tin người tặng-->
+                                <div class="card card-body p-3">
+                                    <div class="d-flex flex-row">
+                                        <input type="text" class="form-control me-2" name="nameTang" placeholder="Họ và Tên *">
+                                        <input type="text" class="form-control" name="sdtTang" placeholder="Số điện thoại *">
+                                    </div>
+                                    <span style="color: #bbbbbb; font-size: 13px;" class="mt-2">*Shop sẽ gọi điện / zalo đến người mua trước để xác nhận đơn & gửi STK (Nếu A/c cần thanh toán trước để gửi tặng)</span>
+                                </div>
+
+                            </div>
+                            <!--Số nhà-->
+                            <input type="text" class="form-control my-2" name="diaChi" placeholder="Số nhà, tên đường *" required>
+
+                            <!--Gói quà-->
+                            <b>Dịch vụ kèm theo để có 1 món quà gấu bông ấn tượng</b>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="goiQua" value="0" id="goi1">
+                                <label class="form-check-label" for="goi1">
+                                    Bọc Quà Miễn phí: Túi kính buộc nơ
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="goiQua" value="100000" id="goi2" checked>
+                                <label class="form-check-label" for="goi2">
+                                    Bọc Quà Có Phí: Bọc hộp giấy nơ lụa (20k - 100k)
+                                </label>
+                            </div>
+
+                            <!--Hình thức thanh toán-->
+                            <b>Hình thức thanh toán</b>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="thanhToan" id="nganHang" value="Chuyển khoản ngân hàng">
+                                <label class="form-check-label" for="nganHang">
+                                    Chuyển khoản ngân hàng
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="thanhToan" value="Trả tiền mặt khi nhận hàng (COD)" id="COD" checked>
+                                <label class="form-check-label" for="COD">
+                                    Trả tiền mặt khi nhận hàng (COD)
+                                </label>
+                            </div>
+
+                            <!--Voucher mã khuyến mãi-->
+                            <div class="d-flex flex-row my-3 flex-wrap">
+
+                                <label class="voucher-card">
+                                    <input type="radio" name="khuyenMai" value="giam50" />
+
+                                    <div class="voucher-content">
+                                        <img src="@Url.Content("/Content/Icons/voucher.png")" alt="voucher" class="voucher-img" />
+
+                                        <div class="d-flex flex-column justify-content-center">
+                                            <b style="color: var(--primary-color);">GIAM50K</b>
+                                            <span style="font-size: 12px; font-weight:600; color:#808080;">Đơn > 1tr</span>
+                                        </div>
+                                    </div>
+                                </label>
+
+                                <label class="voucher-card">
+                                    <input type="radio" name="khuyenMai" value="giam30" />
+
+                                    <div class="voucher-content">
+                                        <img src="@Url.Content("/Content/Icons/voucher.png")" alt="voucher" class="voucher-img" />
+
+                                        <div class="d-flex flex-column justify-content-center">
+                                            <b class="text-color-theme">GIAM30K</b>
+                                            <span style="font-size: 12px; font-weight:600; color:#808080;">Đơn > 300k</span>
+                                        </div>
+                                    </div>
+                                </label>
+
+                            </div>
+
+                            <hr />
+                            <!--Tính tiền-->
+                            <div class="d-flex flex-row justify-content-between">
+                                <span>Tạm tính</span>
+                                <span>@Model.TongThanhTien.ToString("N0")đ</span>
+                            </div>
+                            <div class="d-flex flex-row justify-content-between">
+                                <span>Voucher giảm giá</span>
+                                <span class="ms-auto">10.000đ</span>
+                            </div>
+                            <div class="d-flex flex-row justify-content-between">
+                                <span>Phí giao hàng</span>
+                                <span class="ms-auto">60.000đ</span>
+                            </div>
+                            <p style="font-size:14px;">Nội thành HCM: hoả tốc 60p - 4h. Ngoại thành HCM: 2-4 ngày</p>
+
+                            <hr />
+                            <!--Nút đặt-->
+                            <div class="d-flex flex-row-reverse mb-2">
+                                <button type="submit" class="btn color-theme text-white rounded-pill px-4">
+                                    <i class="fa-solid fa-bag-shopping me-2"></i> Đặt đơn hàng
+                                </button>
+                                <div class="text-end me-3">
+                                    <span>Thành tiền: <b class="text-color-theme">@( (Model.TongThanhTien + 60000).ToString("N0") )đ</b></span><br />
+                                    <span style="font-size: 15px;">Tiết kiệm: <b>10.000đ</b></span>
+                                </div>
+                            </div>
+                            <p class="text-end" style="font-size: 13px;">*Tầm 15p Shop sẽ gọi điện đến A/c để Tổng & Xác nhận đơn</p>
+                        }
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@if (TempData["ShowCart"] != null && (bool)TempData["ShowCart"])
+{
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function () {
+
+            if (typeof bootstrap !== 'undefined') {
+                var myModal = new bootstrap.Modal(document.getElementById('cartModal'));
+                myModal.show();
+            } else {
+
+                $('#cartModal').modal('show');
+            }
+        });
+    </script>
+}
+
+@if (TempData["OrderSuccess"] != null)
+{
+    var successMessage = TempData["OrderSuccess"].ToString(); 
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+           
+            const notifications = document.querySelector(".notifications");
+
+            if(!notifications) {
+                 console.error("Không tìm thấy class .notifications trong DOM");
+                 return;
+            }
+
+            const toastDetails = {
+                timer: 5000,
+                success: {
+                    icon: 'fa-circle-check',
+                    text: '@Html.Raw(successMessage)', 
+                    title: 'Thành công',
+                },
+                error: {
+                    icon: 'fa-circle-xmark',
+                    text: 'Thất bại',
+                    title: 'Lỗi',
+                },
+                warning: {
+                    icon: 'fa-triangle-exclamation',
+                    text: 'Cảnh báo',
+                    title: 'Cảnh báo',
+                },
+                info: {
+                    icon: 'fa-circle-info',
+                    text: 'Thông tin',
+                    title: 'Thông tin',
+                }
+            }
+
+            const removeToast = (toast) => {
+                toast.classList.add("hide");
+                if (toast.timeoutId) clearTimeout(toast.timeoutId);
+                setTimeout(() => toast.remove(), 500);
+            }
+
+            const createToast = (id) => {
+                const { icon, text, title } = toastDetails[id];
+                const toast = document.createElement("li");
+                toast.className = `toast ${id}`;
+                toast.innerHTML = `<div class="column">
+                                     <i class="fa-solid ${icon}"></i>
+                                     <div>
+                                         <span>${title}</span>
+                                         <span>${text}</span>
+                                      </div>
+                                   </div>
+                                   <i class="fa-solid fa-xmark" onclick="removeToast(this.parentElement)"></i>`;
+                notifications.appendChild(toast);
+                toast.timeoutId = setTimeout(() => removeToast(toast), toastDetails.timer);
+            }
+
+            // Gọi hàm tạo Toast thành công
+            createToast("success");
+        });
+    </script>
+}

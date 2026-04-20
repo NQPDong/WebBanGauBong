@@ -1,0 +1,121 @@
+﻿
+@{
+    ViewBag.Title = "OrderDetail";
+}
+
+@model WebBanGauBong.Models.Orders
+
+<div class="my-3">
+    <div class="d-flex justify-content-between">
+        <div>
+            <a class="text-decoration-none" href="@Url.Action("OrderDetailPage", "Cart", new {orderID = Model.OrderID})"><b class="me-4">WEB-ORDER-@Model.OrderID</b></a>
+            <span style="color: #808080;"><i class="bi bi-download"></i> Lưu về máy</span>
+        </div>
+        <div>
+            <span style="color: #ff6a00; margin-right: 10px;">@Model.Status</span>
+            <span>@Model.OrderDate</span>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-5">
+            <b>Giỏ hàng</b>
+            @if (Model.OrderDetail.Count() != 0)
+            {
+                foreach (var product in Model.OrderDetail)
+                {
+                    <div class="d-flex flex-row mb-3">
+                        <img src="@Url.Content("~/Content/Images/" + product.ProductSize.Product.ProductImages.First().ImageURL)" alt="@product.ProductSize.Product.ProductName" height=100 class="rounded-3" />
+                        <div class="ms-3 w-100">
+                            <a class="text-decoration-none" href="@Url.Action("Detail", "Product", new {id = product.ProductSize.ProductID})">@product.Quantity x @product.ProductSize.Product.ProductName</a>
+                            <div class="d-flex justify-content-between">
+                                @{
+                                    int s = int.Parse(product.ProductSize.SizeName.ToString());
+                                    string sizeName = s.ToString();
+                                    if (s >= 100)
+                                    {
+                                        int soMet = s / 100;
+                                        int soDu = s % 100;
+
+                                        if (soDu == 0)
+                                        {
+                                            sizeName = $"{soMet}m";
+                                        }
+                                        else
+                                        {
+                                            sizeName = $"{soMet}m{soDu.ToString("D2")}";
+                                        }
+                                    }
+                                    else
+                                    {
+                                        sizeName = s.ToString() + "cm";
+                                    }
+                                }
+                                <span class="badge text-black rounded-pill py-2" style="background-color: #d1d1d1; font-size: 14px;">@sizeName</span>
+                                <span class="text-color-theme fw-medium fw-bold">@product.UnitPrice.Value.ToString("N0")đ</span>
+                            </div>
+                        </div>
+
+                    </div>
+                }
+            }
+        </div>
+        <div class="col-7">
+            <b>Thông tin đơn hàng</b>
+            <div class="d-flex justify-content-between">
+                <span>Người mua</span>
+                <span>@Model.NameUser <br /> @Model.SDT</span>
+            </div>
+            <div class="d-flex justify-content-between">
+                <span>Địa chỉ nhận hàng</span>
+                <span>@Model.Address</span>
+            </div>
+            <hr />
+            <div class="d-flex justify-content-between">
+                <span>Tạm tính</span>
+                <span>@Model.TamTinh().ToString("N0")đ</span>
+            </div>
+            @if (Model.Discount.GetValueOrDefault() != 0)
+            {
+                <div class="d-flex justify-content-between">
+                    <span>
+                        Coupon:
+                        @if (Model.Discount == 30000)
+                        {
+                            <span>GIAM30K</span>
+                        }
+                        else if (Model.Discount == 50000)
+                        {
+                            <span>GIAM50K</span>
+                        }
+                    </span>
+                    <span>@Model.Discount.GetValueOrDefault().ToString("N0")đ</span>
+                </div>
+            }
+            <div class="d-flex justify-content-between">
+                <span>Phí giao hàng</span>
+                <span>60.000đ</span>
+            </div>
+            <hr />
+            <div class="d-flex justify-content-between">
+                <span>Tổng (Đã tính Phí Ship)</span>
+                <span class="d-flex flex-column justify-content-end">
+                    <span class="fw-bold ms-auto">@( (Model.ThanhTien() + 60000).ToString("N0"))đ</span>
+
+                    @if (Model.Discount.GetValueOrDefault() != 0)
+                    {
+                        <span class="text-color-theme" style="font-size:13px;">
+                            (Đã giảm @Model.Discount.GetValueOrDefault().ToString("N0")đ trên giá gốc)
+                        </span>
+                    }
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<center class="my-5">
+    <span class="p-3" style="background-color: #e2e2e2; border-radius: 30px 30px 30px 5px; font-size: 14px;">
+        A/c vui lòng chụp màn hình đơn & chat với shop để được hỗ trợ xử lí đơn nhanh chóng hơn nhé
+    </span>
+</center>

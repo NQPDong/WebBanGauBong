@@ -1,0 +1,690 @@
+﻿
+@{
+    ViewBag.Title = "Detail";
+    List<WebBanGauBong.Models.ProductImages> ListAnhPhu = ViewBag.ListHinhAnhPhu as List<WebBanGauBong.Models.ProductImages>;
+    WebBanGauBong.Models.Category Loai = ViewBag.Loai as WebBanGauBong.Models.Category;
+
+    List<WebBanGauBong.Models.Rating> ListRating = Model.Rating != null ? Model.Rating.ToList() : new List<WebBanGauBong.Models.Rating>();
+
+    double starAvg = Model.Rating != null ? (double)Math.Round(Model.Rating.Average(t => t.Star).Value, 1) : 0;
+    int starSum = Model.Rating != null ? (int)Model.Rating.Sum(t => t.Star) : 0;
+
+    List<WebBanGauBong.Models.ProductSize> Size = Model.ProductSize != null ? Model.ProductSize.ToList() : null;
+
+    string priceTargetId = "price-" + Model.ProductID;
+
+    decimal discountRate = Model.Discount.Count() != 0 ? (decimal)Model.Discount.First().DiscountRate.Value : 0;
+}
+
+@model WebBanGauBong.Models.Product
+
+<script src="https://cdn.tiny.cloud/1/bugxlzs99cwo7w40otxn3kuup7945w9vis73xwehrg69z4eg/tinymce/8/tinymce.min.js" referrerpolicy="origin" crossorigin="anonymous"></script>
+
+<div class="row mt-3">
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @ViewBag.Error
+        </div>
+    }
+    <!--Breadcrumb-->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a class="text-decoration-none linkhover" href="@Url.Action("HomePage","Home")" style="color: gray;">Trang Chủ</a></li>
+            <li class="breadcrumb-item "><a class="text-decoration-none linkhover" href="@Url.Action("Index","Product")" style="color: gray;">Gấu Bông Cao Cấp</a></li>
+            @foreach (var item in ViewBag.BreadCrumbLoai as List<WebBanGauBong.Models.Category>)
+            {
+                <li class="breadcrumb-item linkhover"><a class="text-decoration-none" href="@Url.Action("TimKiemTheoLoai","Product", new {id = item.CategoryID})" style="color: gray;">@item.CategoryName</a></li>
+            }
+            <li class="breadcrumb-item active" aria-current="page" >@Model.ProductName</li>
+        </ol>
+    </nav>
+
+    <div class="col-6">
+
+        <!--Anh san pham-->
+        <div class="carousel slide" id="carouselDemo"
+             data-bs-wrap="true"
+             data-bs-ride="carousel">
+            <div class="carousel-inner rounded-top-2">
+
+                <div class="carousel-item active"
+                     data-bs-interval="2500">
+                    <img src="@Url.Content("~/Content/Images/" + ListAnhPhu[0].ImageURL)" alt="" class="w-100">
+                    <div class="carousel-caption">
+                    </div>
+                </div>
+                @foreach (var item in ListAnhPhu.Skip(1))
+                {
+                    <div class="carousel-item"
+                         data-bs-interval="2500">
+                        <img src="@Url.Content("~/Content/Images/" + item.ImageURL)" alt="" class="w-100 ">
+                        <div class="carousel-caption">
+                        </div>
+                    </div>
+                }
+
+            </div>
+            <img src="@Url.Content("~/Content/Images/product-footer.jpg")" alt="khuyến mãi" class="w-100 rounded-bottom" />
+
+            <button class="carousel-control-prev" type="button"
+                    data-bs-target="#carouselDemo"
+                    data-bs-slide="prev">
+                <i class="bi bi-chevron-left fa-5x"></i>
+            </button>
+
+            <button class="carousel-control-next"
+                    type="button"
+                    data-bs-target="#carouselDemo"
+                    data-bs-slide="next">
+                <i class="bi bi-chevron-right fa-5x"></i>
+            </button>
+
+            <div class="carousel-indicators ">
+                <button type="button" class="me-2 active"
+                        data-bs-target="#carouselDemo"
+                        data-bs-slide-to="0"
+                        aria-current="true">
+                    <img src="@Url.Content("~/Content/Images/" + ListAnhPhu[0].ImageURL)" alt="">
+                </button>
+
+                @{ int i = 1;}
+
+                @foreach (var item in ListAnhPhu.Skip(1))
+                {
+                    <button type="button" class="me-2"
+                            data-bs-target="#carouselDemo"
+                            data-bs-slide-to="@i">
+                        <img src="@Url.Content("~/Content/Images/" + item.ImageURL)" alt="">
+                    </button>
+                    i++;
+                    if (i == 5) { break; }
+                }
+            </div>
+
+        </div>
+
+
+    </div>
+
+    <div class="col-6 cardBodyDetail">
+        <h4 style="font-weight:bold;"><a href="" class="linkhover">@Model.ProductName</a></h4>
+        <a href="@Url.Action("TimKiemTheoLoai", "Product", new {id = Loai.CategoryID})" class="linkhover">@Loai.CategoryName</a>
+
+        <div class="small-star rating">
+            <!--Sao đánh giá-->
+            <div class="rating__average">
+                <div class="star-outer">
+                    <div class="star-inner"
+                         style="width: @(starAvg/ 5.0 * 100.0)%"></div>
+                </div>
+                <span style="font-size:14px; font-weight: bold;">@starAvg</span>
+            </div>
+        </div>
+
+        <!--Tien giam-->
+        <div>
+            @{
+                decimal tienChuaGiam = Size[0].Price.Value;
+                if (discountRate != 0)
+                {
+                    decimal tienSauGiam = tienChuaGiam * (100 - discountRate) / 100;
+
+                    <p style="text-decoration: line-through; color: #b7b7b7;" id="@priceTargetId">
+                        @tienChuaGiam.ToString("N0", new System.Globalization.CultureInfo("vi-VN"))đ
+                    </p>
+                    <h4>
+                        <span id="after-@priceTargetId" style="font-weight: bold; color: var(--primary-color);">@tienSauGiam.ToString("N0")đ</span> 
+                        <span class="mx-2 badge color-theme-1 px-1">-@discountRate%</span>
+                    </h4>
+                }
+                else
+                {
+                    <h4 id="after-@priceTargetId">
+                        @tienChuaGiam.ToString("N0")đ
+                    </h4>
+                }
+            }
+
+        </div>
+
+        <div>
+            <img src="@Url.Content("~/Content/Icons/icon-car.svg")" alt="" />
+            HCM Ship Siêu Tốc 60p
+        </div>
+        <div class="my-2" style="font-size: 15px;">Kích thước: <span class="text-color-theme fw-bold" id="tagSizeDetail">@Size[0].SizeName.Value.ToString()cm</span></div>
+
+        @using (Html.BeginForm("AddToCart", "Cart", FormMethod.Post, new { productSizeID = "productSizeID", quantity = "quantity" }))
+        {
+            <!--Nút size đổi giá-->
+            <div class="size-scroll-container d-flex flex-nowrap mb-2">
+                <!--Nut size-->
+                @{
+                    int s = int.Parse(Size[0].SizeName.ToString());
+                    string sizeName = s.ToString();
+                    if (s >= 100)
+                    {
+                        int soMet = s / 100;
+                        int soDu = s % 100;
+
+                        if (soDu == 0)
+                        {
+                            sizeName = $"{soMet}m";
+                        }
+                        else
+                        {
+                            sizeName = $"{soMet}m{soDu.ToString("D2")}";
+                        }
+                    }
+                    else
+                    {
+                        sizeName = s.ToString() + "cm";
+                    }
+                }
+                <button type="button" class="btn btnSizeDetail flex-shrink-0 active"
+                        data-id="@Size[0].ProductSizeID"
+                        data-price="@Size[0].Price.Value"
+                        data-target="@priceTargetId"
+                        data-discount="@discountRate"
+                        data-size="@sizeName"
+                        style="--bs-btn-padding-y: .22rem; --bs-btn-padding-x: .4rem; --bs-btn-font-size: .70rem;">
+                    @sizeName
+                </button>
+
+                @foreach (var size in Size.Skip(1))
+                {
+                    s = int.Parse(size.SizeName.ToString());
+                    sizeName = s.ToString();
+                    if (s >= 100)
+                    {
+                        int soMet = s / 100;
+                        int soDu = s % 100;
+
+                        if (soDu == 0)
+                        {
+                            sizeName = $"{soMet}m";
+                        }
+                        else
+                        {
+                            sizeName = $"{soMet}m{soDu.ToString("D2")}";
+                        }
+                    }
+                    else
+                    {
+                        sizeName = s.ToString() + "cm";
+                    }
+                    <button type="button" class="btn btnSizeDetail flex-shrink-0"
+                            data-id="@size.ProductSizeID"
+                            data-price="@size.Price.Value"
+                            data-target="@priceTargetId"
+                            data-discount="@discountRate"
+                            data-size="@sizeName"
+                            style="--bs-btn-padding-y: .22rem; --bs-btn-padding-x: .4rem; --bs-btn-font-size: .70rem;">
+                        @sizeName
+                    </button>
+                }
+                <input type="number" hidden name="productSizeID" id="productSizeID" value="@Size[0].ProductSizeID" />
+            </div>
+
+            <!--Nút tăng giảm số lượng, thêm giỏ hàng, mua-->
+            <div class="d-flex flex-row my-2">
+                <div class="d-flex flex-row px-2 mb-3 me-2 border rounded-pill quantity-container fw-bold">
+                    <button type="button" class="btn btn-decrease rounded-circle">-</button>
+                    <div class="p-2 quantity-display">1</div>
+                    <input type="number" hidden name="quantity" class="quantity-input" value=1 />
+                    <button type="button" class="btn btn-increase rounded-circle">+</button>
+                </div>
+
+                <!--Them vao gio hang-->
+                <button class="btn me-2 rounded-circle px-4 py-2" style="background-color:#b7b7b7;" type="submit">
+                    <i class="fa-solid fa-basket-shopping"></i>
+                </button>
+
+                <button type="submit" class="btn me-2 color-theme px-5 rounded-pill text-white py-2">
+                    <i class="fa-solid fa-gift"></i> Gửi Tặng
+                </button>
+
+                <button type="submit" class="btn px-5 rounded-pill btnMua text-white py-2">
+                    <i class="fa-solid fa-bag-shopping"></i> Mua Ngay
+                </button>
+            </div>
+        }
+        <a class="my-2 text-decoration-none" href="https://id.zalo.me/account?continue=http%3A%2F%2Fzalo.me%2F0967110738">
+            <img src="@Url.Content("~/Content/Icons/zalo.svg")" alt="" height=30 />
+            Chat với Shop để được hỗ trợ / tư vấn <i class="bi bi-arrow-right"></i>
+        </a>
+        <!--Voucher mã khuyến mãi-->
+        <div class="d-flex flex-row my-3 flex-wrap">
+
+            <label class="voucher-card">
+                <input type="radio" name="khuyenMai" value="giam50" />
+
+                <div class="voucher-content">
+                    <img src="@Url.Content("/Content/Icons/voucher.png")" alt="voucher" class="voucher-img" />
+
+                    <div class="d-flex flex-column justify-content-center">
+                        <b style="color: var(--primary-color);">GIAM50K</b>
+                        <span style="font-size: 12px; font-weight:600; color:#808080;">Đơn > 1tr</span>
+                    </div>
+                </div>
+            </label>
+
+            <label class="voucher-card">
+                <input type="radio" name="khuyenMai" value="giam30" />
+
+                <div class="voucher-content">
+                    <img src="@Url.Content("/Content/Icons/voucher.png")" alt="voucher" class="voucher-img" />
+
+                    <div class="d-flex flex-column justify-content-center">
+                        <b>GIAM30K</b>
+                        <span style="font-size: 12px; font-weight:600; color:#808080;">Đơn > 300k</span>
+                    </div>
+                </div>
+            </label>
+
+        </div>
+
+        <!--Săn voucher giảm giá-->
+        <div class="d-flex flex-row rounded-3 p-2 my-3" style="background-color: #ffe2e2; color: var(--primary-color); ">
+            <img src="@Url.Content("~/Content/Icons/giftbox.png")" class="me-2" alt="" height=24 />
+            <span>Săn thêm <b>Voucher Giảm Giá</b></span>
+            <button type="button" class="rounded-pill color-theme text-white ms-auto border-0 h-25">
+                Săn ngay <i class="bi bi-arrow-right"></i>
+            </button>
+        </div>
+
+        <!--Chính sách-->
+        <div class="row row-cols-2">
+            <div class="d-flex flex-row mb-3 col">
+                <img src="@Url.Content("~/Content/Icons/return.svg")" alt="" class="me-2"/>
+                <span style="font-size: 14px;">
+                    Đổi Hàng trong 3 ngày <br />
+                    qua số điện thoại
+                </span>
+            </div>
+
+            <div class="d-flex flex-row mb-3 col">
+                <img src="@Url.Content("~/Content/Icons/return-60.svg")" alt="" class="me-2"/>
+                <span style="font-size: 14px;">
+                    HCM Hỏa Tốc 60p <br />
+                    Ship Tỉnh 2-4 ngày
+                </span>
+            </div>
+
+            <div class="d-flex flex-row mb-3 col">
+                <img src="@Url.Content("~/Content/Icons/phone.svg")" alt="" class="me-2"/>
+                <span style="font-size: 14px;">
+                    Zalo/Hotline: 0967110738 <br />
+                    hỗ trợ từ 9h - 21h30
+                </span>
+            </div>
+
+            <div class="d-flex flex-row mb-3 col">
+                <img src="@Url.Content("~/Content/Icons/location.svg")" alt="" class="me-2"/>
+                <span style="font-size: 14px;">
+                    Cửa Hàng: <br />
+                    486 Lê Văn Sỹ, P.14, Q.3, HCM
+                </span>
+            </div>
+        </div>
+        <hr />
+
+        <!--Xem tichs diem-->
+        <div style="background-color: #f2f2fe;" class="rounded-4 p-3">
+            <span class="mb-2">Tích Điểm 3% khi mua hàng <b style="color: var(--primary-color);">Xem Điểm Tích Lũy</b></span>
+
+            <div class="accordion" id="accordionExample">
+                <div class="accordion-item rounded-4">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button color-theme-1 text-white rounded-top-4" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            <span>🜲 Tích Điểm <span class="fw-bold">3%</span> giá trị Đơn hàng đã mua</span>
+                        </button>
+                    </h2>
+                    <div id="collapseOne" class="accordion-collapse collapse show " data-bs-parent="#accordionExample">
+                        <div class="accordion-body color-theme-1 text-white rounded-bottom-4">
+                            Đơn hàng sau khi hoàn thành, Khách hàng sẽ được tích lũy điểm = 3% giá trị đơn hàng đã mua. Điểm tích lũy sẽ được qui đổi giảm giá cho lần mua kế tiếp
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Đặc điểm nổi bật-->
+        <div class="mt-3">
+            <p class="d-inline-flex gap-1">
+                <a class="btn border-0" data-bs-toggle="collapse" href="#collapseDacDiem">
+                    Đặc điểm nổi bật (Click to see)
+                </a>
+            </p>
+            <div class="collapse" id="collapseDacDiem">
+                <div class="card card-body border-0">
+                    <span>- <b style="color: var(--primary-color);">Miễn Phí Gói Quà</b> Túi Kiếng & Nơ</span> <br />
+                    <span>- <b style="color: var(--primary-color);">Hỏa Tốc</b> Ship HCM 45-60p</span> <br />
+                    <span>- Gấu nhồi 100% gòn Trắng đàn hồi tinh khiết</span> <br />
+                    <span>- <b style="color: var(--primary-color);">Bảo Hành</b> Gấu được bảo hành đường chỉ may Vĩnh Viễn tại cửa hàng</span> <br />
+                    <span>- <b style="color: var(--primary-color);">Tích Điểm</b> Khách hàng sẽ được tích lũy điểm = 3% giá trị đơn hàng đã mua</span> <br />
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex flex-row align-items-center text-primary bg-primary-subtle rounded-3 p-2" style="font-size: 15px;">
+            <img src="@Url.Content("~/Content/Icons/icon-check.png")" alt="" height=40 />
+            <span>Tất cả hình ảnh SP đều là Hình Thật Shop tự chụp.</span>
+        </div>
+    </div>
+</div>
+
+<!--Chi tiết sản phẩm-->
+<div class="my-5">
+    <center><h2 style="font-weight:bold;">CHI TIẾT SẢN PHẨM</h2></center>
+
+    <div class="collapse" id="productDetailCollapse">
+        <div class="card card-body border-0">
+            @foreach (var item in ListAnhPhu)
+            {
+                <center class="mb-3">
+                    <img class="rounded-5" src="@Url.Content("~/Content/Images/" + item.ImageURL)" alt="@Model.ProductName" height=600 />
+                    <div>@Model.ProductName</div>
+                </center>
+            }
+
+            <p class="mt-4">
+                @Model.ProductName đang nằm trong danh sách những sản phẩm <a href="@Url.Action("TimKiemTheoLoai", "Product", new {id = Loai.CategoryID})" style="text-decoration:none; color: var(--primary-color);">@Loai.CategoryName</a> BÁN CHẠY và đang được các bạn trẻ YÊU THÍCH NHẤT.<br />
+
+                <a href="" style="text-decoration:none; color: var(--primary-color);">@Model.ProductName</a> cosplay Monster được thiết kế với 1 kích thước Gấu Bông lớn nhỏ khác nhau: 95cm<br />
+
+                <b>Cách đo Size Gấu Bông:</b>
+                <ul>
+                    <li>
+                        Gấu Ngồi (có chân): được đo từ đầu đến mông + từ mông đến chân (Theo chữ L)
+                    </li>
+                    <li>
+                        Gấu Dài: được đo từ đầu đến phần dài cuối cùng
+                    </li>
+                </ul>
+
+                <b>Chất Liệu:</b> Gấu Bông Stitch Xanh cosplay Monster được làm từ chất liệu lông cao cấp, bên trong Gấu được nhồi 100% gòn trắng đàn hồi tinh khiết, giúp Gấu Bông Stitch Xanh cosplay Monster rất căng bông, êm ái và cực kì an toàn cho sức khỏe.
+
+                <br />
+                <b>Hoàn Tiền - Tích Điểm:</b> Các Sản Phẩm Gấu Bông Stitch khi mua hàng bạn sẽ được đăng ký thông tin vào hệ thống, ngay lập tức bạn sẽ được tích lũy điểm = 3% giá trị đơn hàng đã mua cho lần mua kế tiếp.
+
+                <br />
+                <b>Bảo Hành:</b> Đặc biệt, với số điện thoại đã đăng ký, Gấu Bông của bạn mua sẽ được bảo hành đường chỉ may trọn đời tại Shop. Gấu của bạn bị bung chỉ? bạn cứ mang gấu đến cửa hàng & cung cấp số di động là xong. Shop sẽ chăm sóc Gấu của bạn tận tình.
+
+                <br />
+                <a href="" style="text-decoration:none; color: var(--primary-color);">@Model.ProductName</a> sẽ là món quà tặng vô cùng Dễ Thương dành cho người thân yêu của bạn!
+                <br />
+                Hình ảnh @Model.ProductName, hình ảnh này là hình THẬT do Shop TỰ CHỤP.
+            </p>
+        </div>
+    </div>
+    <p class="d-flex justify-content-center mt-3 ">
+        <a class="btn border rounded-pill px-5"
+           href="#productDetailCollapse" role="button"
+           data-bs-toggle="collapse">
+            Xem thêm
+        </a>
+    </p>
+
+</div>
+
+<!--Gợi ý sản phâm-->
+<div class="">
+    <h2 style="font-weight:bold;" class="text-center">GỢI Ý SẢN PHẨM</h2>
+
+    <h4 class="mt-4">
+        <a href="@Url.Action("TimKiemTheoLoai", "Product", new {id = Loai.CategoryID})" style="text-decoration:none;" class="my-3 fw-bold link-index">
+            GẤU BÔNG CÙNG LOẠI
+        </a>
+    </h4>
+
+    <img src="@Url.Content("~/Content/Images/cat-thubong-bn.jpg")" alt="" class="mb-3 rounded-4" />
+
+    <!--Sản phẩm liên qua-->
+    <div class="row row-cols-5">
+        @foreach (var item in Loai.Product.ToList().Take(10))
+        {
+            if (item.ProductID != Model.ProductID)
+            {
+                @Html.Action("CardSanPham", "Home", new { id = item.ProductID })
+            }
+        }
+    </div>
+    <center class="mb-3">
+        <a href="@Url.Action("TimKiemTheoLoai", "Product", new {id = Loai.CategoryID})" class="xemThem btn rounded-pill px-5 py-3 text-center">
+            XEM THÊM <i class="bi bi-chevron-right"></i>
+        </a>
+    </center>
+</div>
+
+<!--Đánh giá, bình luận-->
+<div class="row my-5 ">
+
+    <!--Card sao lon trung binh-->
+    <div class="col-4 big-star rating position-sticky ">
+        <div class="rating__average p-3">
+            <h4 class="mt-4">ĐÁNH GIÁ SẢN PHẨM</h4>
+            <h1>4.5</h1>
+            <div class="star-outer">
+                <div class="star-inner"></div>
+            </div>
+            <p class="fst-italic">230.881</p>
+            <button type="button" class="btn rounded-pill btnRating"
+                    data-bs-toggle="modal" data-bs-target="#sendRating">
+                <i class="bi bi-star-fill"></i> Gửi Đánh Giá
+            </button>
+        </div>
+    </div>
+    <!--Modal rating-->
+    <div class="modal fade "
+         id="sendRating"
+         tabindex="-1"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg ">
+            @using (Html.BeginForm("RatingOnSubmit", "Product", new { id = Model.ProductID }, FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">
+                            ĐÁNH GIÁ REVIEW SẢN PHẨM
+                        </h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!--Click sao-->
+                        <div class="rating-star-click">
+                            <input type="radio" id="star5" name="rating" value="5">
+                            <label for="star5"><i class="fa-solid fa-star"></i></label>
+                            <input type="radio" id="star4" name="rating" value="4">
+                            <label for="star4"><i class="fa-solid fa-star"></i></label>
+                            <input type="radio" id="star3" name="rating" value="3">
+                            <label for="star3"><i class="fa-solid fa-star"></i></label>
+                            <input type="radio" id="star2" name="rating" value="2">
+                            <label for="star2"><i class="fa-solid fa-star"></i></label>
+                            <input type="radio" id="star1" name="rating" value="1">
+                            <label for="star1"><i class="fa-solid fa-star"></i></label>
+                        </div>
+
+                        <div class="row mb-3 mx-1">
+                            <input type="text"
+                                   placeholder="Họ & Tên"
+                                   class=" col form-control rounded-3 custom-input me-2"
+                                   name="name" />
+
+                            <input type="email"
+                                   placeholder="Email"
+                                   class="col form-control rounded-3 custom-input "
+                                   name="email" />
+
+                        </div>
+                        <!--Comment-->
+                        <textarea class="form-control rounded-3 custom-review-field ms-1 me-2"
+                                  placeholder="Nhận xét review sản phẩm"
+                                  rows="2"
+                                  style="min-width: 100%"
+                                  name="comment"></textarea>
+
+                        <!--Upload img-->
+                        <div class="hero">
+                            <label for="input-file" id="drop-area">
+                                <input type="file" accept="image/*" id="input-file" name="Image" hidden>
+                                <div id="img-view">
+                                    <img src="@Url.Content("~/Content/Icons/upload-icon.svg")" alt="" height=50>
+                                    <p>Kéo thả ảnh cần upload vào đây<br>hoặc</p>
+                                    <buton class="btn btn-primary rounded-4">Chọn ảnh</buton>
+                                </div>
+                            </label>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary rounded-circle px-3" data-bs-dismiss="modal">
+                            <i class="bi bi-x fa-2x"></i>
+                        </button>
+                        <button type="submit" class="btn btn-primary rounded-pill py-3" style="width: 680px;">
+                            GỬI ĐÁNH GIÁ
+                        </button>
+                    </div>
+                </div>
+
+            }
+        </div>
+    </div>
+
+
+
+    <div class="row col-8">
+        @foreach (var item in ListRating)
+        {
+            <div class="col-6">
+                <!--Sao đánh giá-->
+                <div class="small-star rating">
+                    <div class="rating__average">
+                        <div class="star-outer">
+                            <div class="star-inner"
+                                 style="width: @((item.Star / 5.0) * 100.0)%"></div>
+                        </div>
+                    </div>
+                </div>
+                <p>@item.Users.Name</p>
+                <p style="font-size:13px; color: #808080;" class="fst-italic">
+                    @{
+                        int sizeRate = item.ProductSizeName.Value;
+                        string size = sizeRate.ToString();
+                        if (sizeRate >= 100)
+                        {
+                            int soMet = sizeRate / 100;
+                            int soDu = sizeRate % 100;
+
+                            if (soDu == 0)
+                            {
+                                size = $"{soMet}m";
+                            }
+                            else
+                            {
+                                size = $"{soMet}m{soDu.ToString("D2")}";
+                            }
+                        }
+                        else
+                        {
+                            size = sizeRate.ToString() + "cm";
+                        }
+                    }
+                    @size
+                </p>
+                <p>@item.Comment</p>
+                <p style="font-size: 13px;">@item.RatingDate.ToString("dd.MM.yyyy")</p>
+            </div>
+
+        }
+
+        @{
+            if (TempData["ListTempRating"] != null)
+            {
+                foreach (var item in TempData["ListTempRating"] as List<WebBanGauBong.Models.TempRating>)
+                {
+                    <div class="col-6">
+                        <!--Sao đánh giá-->
+                        <div class="small-star rating">
+                            <div class="rating__average">
+                                <div class="star-outer">
+                                    <div class="star-inner"
+                                         style="width: @((item.Star / 5.0) * 100.0)%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <p>@item.Name</p>
+                        <p style="font-size:13px; color: #808080;" class="fst-italic">
+                            Review
+                        </p>
+                        @Html.Raw(item.Comment)
+                        <img src="@Url.Content("~/Content/Images/" + item.Image)" alt="" height=165 class="rounded-4" />
+                        <p style="font-size: 13px;">@item.RateDate.ToString("dd.MM.yyyy")</p>
+                    </div>
+
+                }
+            }
+        }
+
+    </div>
+
+
+</div>
+
+
+<script>
+
+    // Sao đánh giá lớn
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelector('.big-star .rating__average h1').innerHTML = @starAvg;
+
+        document.querySelector('.big-star .rating__average p').innerHTML = @starSum + ' đánh giá';
+
+        document.querySelector('.big-star .star-inner').style.width = (@starAvg / 5) * 100 + '%';
+    });
+
+    //input file ảnh
+    const dropArea = document.getElementById("drop-area");
+    const inputFile = document.getElementById("input-file");
+    const imageView = document.getElementById("img-view");
+    const imageShow = document.getElementById("img-show");
+
+    inputFile.addEventListener("change", uploadImage);
+
+    function uploadImage() {
+        let imgLink = URL.createObjectURL(inputFile.files[0]);
+        imageView.style.backgroundImage = `url(${imgLink})`;
+        imageView.textContent = "";
+        imageView.style.border = 0;
+    }
+
+    dropArea.addEventListener("dragover", function (e) {
+        e.preventDefault();
+    })
+
+    dropArea.addEventListener("drop", function (e) {
+        e.preventDefault();
+        inputFile.files = e.dataTransfer.files;
+        uploadImage();
+    })
+
+    // click star
+    var ratingInputs = document.getElementsByName("rating");
+    ratingInputs.forEach(function (input) {
+        input.addEventListener("change", function () {
+            //var rating = input.value;
+
+            //console.log("Rating được chọn: ", rating);
+        });
+    });
+
+
+</script>
+
+<script>
+    tinymce.init({
+        selector: 'textarea',
+        plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
+        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+    });
+</script>

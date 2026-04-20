@@ -1,0 +1,390 @@
+﻿
+@{
+    ViewBag.Title = "_ModalSuaSanPham";
+}
+
+<style>
+    .modal-content {
+        border-radius: 15px;
+        border: none;
+    }
+
+    .modal-header {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        border-radius: 15px 15px 0 0;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(255,64,129,0.25);
+    }
+
+    .size-price-row {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        position: relative;
+    }
+
+    .btn-remove-size {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: #dc3545;
+        color: white;
+        border: none;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+        .btn-remove-size:hover {
+            background: #c82333;
+            transform: rotate(90deg);
+        }
+
+    /*---------------------------Upload image------------------------------*/
+    :root {
+        --transition: all 300ms ease-in-out;
+    }
+
+    img {
+        width: 100%;
+    }
+
+    .upload {
+        background-color: white;
+        border-radius: 10px;
+        width: 340px;
+        min-height: 360px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        transition: 0.3s ease-in-out;
+        border: 1px solid #4a01aa;
+    }
+
+        .upload:hover {
+            box-shadow: #5304df 20px 20px 30px;
+        }
+
+    .upload-info p {
+        opacity: 0.6;
+        font-weight: 600;
+        margin-top: 10px;
+    }
+
+    .upload-wrapper {
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .upload-img-edit {
+        max-height: 300px;
+        overflow-y: scroll;
+    }
+
+        .upload-img-edit::-webkit-scrollbar-track {
+            box-shadow: inset 0 0 6px rgba(176, 196, 246, 0.1);
+            border-radius: 6px;
+        }
+
+        .upload-img-edit::-webkit-scrollbar-thumb {
+            background-color: rgba(176, 196, 246, 0.1);
+            border-radius: 6px;
+        }
+
+        .upload-img-edit::-webkit-scrollbar {
+            width: 5px;
+        }
+
+    .upload-area-edit {
+        padding: 20px;
+        border: 2px dashed #3c3c3c;
+        border-radius: 8px;
+        margin-top: 20px;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+        .upload-area-edit:hover {
+            background-color: #a5fff7;
+        }
+
+    .upload-area-img img {
+        max-width: 80px;
+    }
+
+    .upload-area-text {
+        font-weight: 700;
+        color: #282727;
+    }
+
+        .upload-area-text span {
+            color: #971bf0;
+        }
+
+    .visually-hidden {
+        visibility: hidden;
+        opacity: 0;
+    }
+
+    .upload-img {
+        width: 340px;
+    }
+
+    .uploaded-img {
+        padding: 4px 0;
+        position: relative;
+    }
+
+
+    /* remove image button */
+    .remove-btn {
+        width: 30px;
+        height: 30px;
+        background-color: white;
+        border: 1px solid #005068;
+        border-radius: 50%;
+        color: #031c4e;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        top: -5px;
+        right: -8px;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+        .remove-btn:hover {
+            background-color: #ac0b0b;
+            color: white;
+        }
+</style>
+
+@model WebBanGauBong.Models.Product
+
+<!-- Add Product Modal -->
+<div class="modal fade" id="productUpdateModal" tabindex="-1">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-plus-circle"></i> Sửa Sản Phẩm
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                @using (Html.BeginForm("UpdateSanPhamOnSubmit", "Product", FormMethod.Post, new { area = "admin", enctype = "multipart/form-data" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <!--Product ID-->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Mã Sản Phẩm </label>
+                        <input type="text" name="ProductID" class="form-control" value="@Model.ProductID" readonly>
+                    </div>
+
+                    <!-- Product Name -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Tên Sản Phẩm <span class="text-danger">*</span></label>
+                        <input type="text" name="ProductName" class="form-control" value="@Model.ProductName" required>
+                        @Html.ValidationMessageFor(model => model.ProductName, "", new { @class = "text-danger" })
+                    </div>
+
+                    <!-- Product Images -->
+                    <div class="mb-4">
+
+                        <div class="upload mx-auto">
+                            <div class="upload-wrapper">
+                                <div class="upload-img-edit p-3">
+                                    <!-- image here -->
+                                    @{ int imgIndex = 0; }
+                                    @foreach (var item in Model.ProductImages)
+                                    {
+                                        <div class="uploaded-img">
+                                            <img src="@Url.Content("~/Content/Images/" + item.ImageURL)" alt="">
+
+                                            <input type="hidden" name="ProductImages[@imgIndex].ProductImageID" value="@item.ProductImageID" />
+                                            <input type="hidden" name="ProductImages[@imgIndex].ProductID" value="@item.ProductID" />
+                                            <input type="hidden" name="ProductImages[@imgIndex].ImageURL" value="@item.ImageURL" />
+
+                                            <button type="button" class="remove-btn">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                        imgIndex++;
+                                    }
+                                </div>
+                                <div class="upload-info">
+                                    <p>
+                                        <span class="upload-info-value-edit">0</span> file(s) uploaded.
+                                    </p>
+                                </div>
+                                <div class="upload-area upload-area-edit">
+                                    <div class="upload-area-img">
+                                        <img src="assets/upload.png" alt="">
+                                    </div>
+                                    <p class="upload-area-text">Select images or <span>browse</span>.</p>
+                                </div>
+                                <input type="file" name="images" class="visually-hidden" id="upload-input-edit" multiple accept="image/*">
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Product Sizes & Prices -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Kích Thước, Giá & Tồn Kho</label>
+
+                        <div id="sizeContainer">
+                            @{
+                                int i = 0;
+                            }
+                            @foreach (var item in Model.ProductSize)
+                            {
+                                <!-- Size Row 1 -->
+                                <div class="size-price-row" id="sizeRow_@i">
+                                    <input type="hidden" name="ProductSize.Index" value="@i" />
+
+                                    <input type="hidden" name="ProductSize[@i].ProductSizeID" value="@item.ProductSizeID" />
+
+                                    <div class="row mb-4">
+                                        <div class="col-md-4">
+                                            <label class="form-label">Kích thước (cm)</label>
+                                            <input type="number" name="ProductSize[@i].SizeName" class="form-control" value=@item.SizeName required>
+                                            @Html.ValidationMessageFor(model => model.ProductSize.ElementAt(i).SizeName, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label">Giá (VNĐ)</label>
+                                            <input type="number" name="ProductSize[@i].Price" class="form-control" value=@item.Price required>
+                                            @Html.ValidationMessageFor(model => model.ProductSize.ElementAt(i).Price, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label">Tồn kho</label>
+                                            <input type="number" name="ProductSize[@i].StockQuantity" class="form-control" value=@item.StockQuantity required>
+                                            @Html.ValidationMessageFor(model => model.ProductSize.ElementAt(i).StockQuantity, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                                i++;
+                            }
+                        </div>
+
+                        <button type="button" class="btn btn-outline-primary mt-2" onclick="addSizeRow()">
+                            <i class="fas fa-plus"></i> Thêm Kích Thước
+                        </button>
+                    </div>
+
+                    <!--Category-->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Danh mục sản phẩm</label>
+                        <select class="form-select" name="SelectedCategoryID">
+                            @foreach (var item in ViewBag.DanhSachLoai as List<WebBanGauBong.Models.Category>)
+                            {
+                                <option value="@item.CategoryID"
+                                        @(Model.Category != null && Model.Category.Any(c => c.CategoryID == item.CategoryID) ? "selected" : "")>
+                                    @item.CategoryName
+                                </option>
+                            }
+                        </select>
+                    </div>
+
+                    <!-- Product Status -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Trạng Thái</label>
+                        <select class="form-select" name="Isenabled">
+                            <option value="1" @(Model.Isenabled == 1 ? "selected" : "")>Đang bán</option>
+                            <option value="0" @(Model.Isenabled == 0 ? "selected" : "")>Ngừng bán</option>
+                        </select>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Lưu Sản Phẩm
+                        </button>
+                    </div>
+                }
+            </div>
+
+
+
+        </div>
+    </div>
+</div>
+
+<script>
+    var currentSizeCounter = @(Model.ProductSize.Count != 0 ? Model.ProductSize.Count : 0);
+
+    // Add new size row
+    function addSizeRow() {
+        let index = currentSizeCounter;
+        const container = document.getElementById('sizeContainer');
+        const newRow = document.createElement('div');
+        newRow.className = 'size-price-row';
+        newRow.id = `sizeRow_${index}`;
+        newRow.innerHTML = `
+                <input type="hidden" name="ProductSize.Index" value="${index}" />
+                <button type="button" class="btn-remove-size" onclick="removeSizeRow(${index})">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label class="form-label">Kích thước (cm)</label>
+                        <input type="number" name="ProductSize[${index}].SizeName" class="form-control" placeholder="VD: 35" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Giá (VNĐ)</label>
+                        <input type="number" name="ProductSize[${index}].Price" class="form-control" placeholder="VD: 190000" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Tồn kho</label>
+                        <input type="number" name="ProductSize[${index}].StockQuantity" class="form-control" placeholder="VD: 50" required>
+                    </div>
+                </div>
+            `;
+
+        container.appendChild(newRow);
+        currentSizeCounter++;
+    }
+
+    // Remove size row
+    function removeSizeRow(id) {
+        const row = document.getElementById(`sizeRow_${id}`);
+        if (row) {
+            row.remove();
+        }
+    }
+
+
+</script>
+
+@if (TempData["ShowModalUpdateProduct"] != null && (bool)TempData["ShowModalUpdateProduct"])
+{
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function () {
+
+            if (typeof bootstrap !== 'undefined') {
+                var myModal = new bootstrap.Modal(document.getElementById('productUpdateModal'));
+                myModal.show();
+            } else {
+
+                $('#productUpdateModal').modal('show');
+            }
+        });
+    </script>
+}
+
+

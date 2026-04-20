@@ -1,0 +1,130 @@
+﻿
+@{
+    ViewBag.Title = "CardSanPham";
+    var firstImage = Model.ProductImages.FirstOrDefault() != null ? Model.ProductImages.FirstOrDefault() : new WebBanGauBong.Models.ProductImages();
+    var Size = Model.ProductSize.Count() != 0 ? Model.ProductSize.ToList() : new List<WebBanGauBong.Models.ProductSize>();
+    decimal discountRate = Model.Discount.Count() != 0 ? (decimal)Model.Discount.First().DiscountRate.Value : 0;
+
+}
+
+@model WebBanGauBong.Models.Product
+
+<div class="col mb-4">
+    <div class="card h-100" style="border:none;">
+        <div class="image-link">
+            <a href="@Url.Action("Detail", "Product", new {id = Model.ProductID})">
+                <img src="@Url.Content("~/Content/Images/" + firstImage.ImageURL)" class="card-img-top rounded-top-5" alt="@Model.ProductName">
+                <img src="@Url.Content("~/Content/Images/product-footer.jpg")" alt="khuyến mãi" class="w-100 rounded-bottom-5" height=35 />
+
+            </a>
+            <a href="@Url.Action("Detail", "Product", new{id = @Model.ProductID})" class="btn rounded-4">
+                <i class="bi bi-bag-plus"></i> <span>Mua Ngay</span>
+            </a>
+        </div>
+
+        <div class="card-body">
+            @{
+                string priceTargetId = "price-" + Model.ProductID;
+            }
+            @if (Size.Count() != 0)
+            {
+                <div class="size-scroll-container d-flex flex-nowrap overflow-auto mb-2">
+                    @{
+                        int s = int.Parse(Size[0].SizeName.ToString());
+                        string sizeName = s.ToString();
+                        if (s >= 100)
+                        {
+                            int soMet = s / 100;
+                            int soDu = s % 100;
+
+                            if (soDu == 0)
+                            {
+                                sizeName = $"{soMet}m";
+                            }
+                            else
+                            {
+                                sizeName = $"{soMet}m{soDu.ToString("D2")}";
+                            }
+                        }
+                        else
+                        {
+                            sizeName = s.ToString() + "cm";
+                        }
+                    }
+                    <button type="button" class="btn btnSizeCard flex-shrink-0 active"
+                            data-price="@Size[0].Price.Value"
+                            data-target="@priceTargetId"
+                            data-discount="@discountRate"
+                            data-size="@sizeName"
+                            style="--bs-btn-padding-y: .22rem; --bs-btn-padding-x: .4rem; --bs-btn-font-size: .70rem;">
+                        @sizeName
+                    </button>
+
+                    @foreach (var size in Size.Skip(1))
+                    {
+                        s = int.Parse(size.SizeName.ToString());
+                        sizeName = s.ToString();
+                        if (s >= 100)
+                        {
+                            int soMet = s / 100;
+                            int soDu = s % 100;
+
+                            if (soDu == 0)
+                            {
+                                sizeName = $"{soMet}m";
+                            }
+                            else
+                            {
+                                sizeName = $"{soMet}m{soDu.ToString("D2")}";
+                            }
+                        }
+                        else
+                        {
+                            sizeName = s.ToString() + "cm";
+                        }
+
+                        <button type="button" class="btn btnSizeCard flex-shrink-0"
+                                data-price="@size.Price.Value"
+                                data-target="@priceTargetId"
+                                data-discount="@discountRate"
+                                data-size="@sizeName"
+                                style="--bs-btn-padding-y: .22rem; --bs-btn-padding-x: .4rem; --bs-btn-font-size: .70rem;">
+                            @sizeName
+                        </button>
+                    }
+                </div>
+            }
+
+            <h6 class="card-title"><a href="@Url.Action("Detail", "Product", new {id = Model.ProductID})">@Model.ProductName</a></h6>
+
+            <!--Tiền-->
+            <div class="d-flex flex-row align-items-center">
+                @{
+                    decimal tienChuaGiam = Size.Count() != 0 ? Size.FirstOrDefault().Price.Value : 0;
+                    if (discountRate != 0)
+                    {
+                        decimal tienSauGiam = tienChuaGiam * (100 - discountRate) / 100;
+
+                        <b id="after-@priceTargetId"
+                           style="font-weight:bold;"
+                           class="text-color-theme me-2">
+                            @tienSauGiam.ToString("N0")đ
+                        </b>
+                        <span class="badge text-bg-secondary p-1 h-25 color-theme me-2">-@discountRate%</span>
+                        <span style="text-decoration: line-through; color:#808080; font-size:13px; font-weight: 600;"
+                              id="@priceTargetId">
+                            @tienChuaGiam.ToString("N0")đ
+                        </span>
+                    }
+                    else
+                    {
+                        <b id="after-@priceTargetId">
+                            @tienChuaGiam.ToString("N0")đ
+                        </b>
+                    }
+                }
+            </div>
+
+        </div>
+    </div>
+</div>

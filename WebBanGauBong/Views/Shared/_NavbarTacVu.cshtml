@@ -1,0 +1,35 @@
+﻿
+@{
+    ViewBag.Title = "_NavbarTacVu";
+}
+
+<!--Search bar-->
+<div class="search-container position-relative">
+    <div class="d-flex">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+             class="search-icon feather feather-search">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input class="form-control search-input ps-5" type="search"
+               placeholder="Tìm kiếm sản phẩm..." aria-label="Search" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    </div>
+</div>
+
+
+<a href="@Url.Action("LoginPage", "User")" class="btn">
+    <img src="@Url.Content("~/Content/Images/icon-account-white.svg")" alt="" />
+</a>
+
+@if (Session["User"] != null)
+{
+    <button class="btn position-relative" type="button" data-bs-toggle="modal" data-bs-target="#cartModal">
+        <img src="@Url.Content("~/Content/Images/icon-cart-white.svg")" alt="" />
+        <span class="badge rounded-circle color-theme-1 py-1 position-absolute top-0 start-80 translate-middle-x">@(Session["Cart"] != null ? ((WebBanGauBong.Models.ShoppingCart)Session["Cart"]).TongSoLuong : 0)</span>
+    </button>
+}
+
+
+
+

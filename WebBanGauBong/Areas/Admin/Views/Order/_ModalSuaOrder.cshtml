@@ -1,0 +1,357 @@
+﻿
+@{
+    ViewBag.Title = "_ModalSuaOrder";
+
+}
+
+<style>
+    /* Modal Styles */
+    .modal-content {
+        border-radius: 20px;
+        border: none;
+    }
+
+    .modal-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 25px 30px;
+        border: none;
+    }
+
+    .modal-title {
+        font-weight: bold;
+        font-size: 22px;
+    }
+
+    .modal-body {
+        padding: 30px;
+    }
+
+    .order-info-section {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 15px;
+        margin-bottom: 25px;
+    }
+
+    .order-info-title {
+        font-size: 18px;
+        font-weight: bold;
+        color: #2C3E50;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .info-row {
+        display: flex;
+        padding: 12px 0;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+    .info-label {
+        font-weight: 600;
+        color: #555;
+        width: 180px;
+        flex-shrink: 0;
+    }
+
+    .info-value {
+        color: #2C3E50;
+        flex: 1;
+    }
+
+    .order-items-table {
+        margin-top: 20px;
+    }
+
+        .order-items-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .order-items-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .order-items-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .order-items-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+    .total-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 15px;
+        margin-top: 25px;
+    }
+
+    .total-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        font-size: 16px;
+    }
+
+        .total-row.final {
+            font-size: 20px;
+            font-weight: bold;
+            padding-top: 15px;
+            border-top: 2px solid rgba(255,255,255,0.3);
+            margin-top: 10px;
+        }
+
+    .status-select-group {
+        background: #fff3cd;
+        padding: 20px;
+        border-radius: 15px;
+        border: 2px solid #ffc107;
+    }
+
+        .status-select-group label {
+            font-weight: bold;
+            color: #856404;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .status-select-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+    .modal-footer {
+        padding: 20px 30px;
+        border-top: 1px solid #e0e0e0;
+    }
+
+    .btn-update {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 12px 30px;
+        border-radius: 25px;
+        border: none;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+
+        .btn-update:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102,126,234,0.4);
+        }
+
+    .product-thumb {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 2px solid #e0e0e0;
+    }
+</style>
+
+@model WebBanGauBong.Models.Orders
+
+<!-- Modal Sửa Trạng Thái Đơn Hàng -->
+<div class="modal fade" id="orderEditModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-edit"></i> Cập Nhật Trạng Thái Đơn Hàng #@Model.OrderID
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+
+            @using (Html.BeginForm("UpdateOrderStatus", "Order", FormMethod.Post, new { area = "admin" }))
+            {
+                @Html.HiddenFor(m => m.OrderID)
+
+                <div class="modal-body">
+                    <!-- Thông Tin Khách Hàng -->
+                    <div class="order-info-section">
+                        <h6 class="order-info-title">
+                            <i class="fas fa-user"></i> Thông Tin Khách Hàng
+                        </h6>
+                        <div class="info-row">
+                            <span class="info-label">Tên khách hàng:</span>
+                            <span class="info-value"><strong>@Model.Users.Name</strong></span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Email:</span>
+                            <span class="info-value">@Model.Users.Email</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Người nhận:</span>
+                            <span class="info-value"><strong>@Model.NameUser</strong></span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Số điện thoại:</span>
+                            <span class="info-value">@Model.SDT</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Địa chỉ giao hàng:</span>
+                            <span class="info-value">@Model.Address</span>
+                        </div>
+                    </div>
+
+                    <!-- Thông Tin Đơn Hàng -->
+                    <div class="order-info-section">
+                        <h6 class="order-info-title">
+                            <i class="fas fa-info-circle"></i> Thông Tin Đơn Hàng
+                        </h6>
+                        <div class="info-row">
+                            <span class="info-label">Mã đơn hàng:</span>
+                            <span class="info-value"><strong>#@Model.OrderID</strong></span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Ngày đặt hàng:</span>
+                            <span class="info-value">
+                                <i class="fa-solid fa-calendar me-1"></i>
+                                @Model.OrderDate.Value.ToString("dd/MM/yyyy HH:mm")
+                            </span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Phương thức thanh toán:</span>
+                            <span class="info-value">
+                                <span class="badge bg-primary">@Model.UserPaymentMethod</span>
+                            </span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Giảm giá:</span>
+                            <span class="info-value"><strong>@Model.Discount.Value.ToString("N0")</strong></span>
+                        </div>
+                    </div>
+
+                    <!-- Chi Tiết Sản Phẩm -->
+                    <div class="order-info-section">
+                        <h6 class="order-info-title">
+                            <i class="fas fa-box-open"></i> Chi Tiết Sản Phẩm
+                        </h6>
+                        <div class="order-items-table">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Hình</th>
+                                        <th>Tên Sản Phẩm</th>
+                                        <th>Kích Thước</th>
+                                        <th>Đơn Giá</th>
+                                        <th>Số Lượng</th>
+                                        <th>Thành Tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        decimal subtotal = 0;
+                                    }
+                                    @foreach (var detail in Model.OrderDetail)
+                                    {
+                                        var productSize = detail.ProductSize;
+                                        var product = productSize.Product;
+                                        var itemTotal = detail.UnitPrice * detail.Quantity;
+                                        subtotal += itemTotal.Value;
+
+                                        <tr>
+                                            <td>
+                                                @if (product.ProductImages.Any())
+                                                {
+                                                    <img src="@Url.Content("~/Content/Images/" + product.ProductImages.First().ImageURL)"
+                                                         class="product-thumb" alt="@product.ProductName">
+                                                }
+                                                else
+                                                {
+                                                    <img src="https://via.placeholder.com/50"
+                                                         class="product-thumb" alt="No image">
+                                                }
+                                            </td>
+                                            <td><strong>@product.ProductName</strong></td>
+                                            <td>
+                                                <span class="badge bg-info">@productSize.SizeName cm</span>
+                                            </td>
+                                            <td>@string.Format("{0:N0}", detail.UnitPrice)₫</td>
+                                            <td>
+                                                <span class="badge bg-secondary">x @detail.Quantity</span>
+                                            </td>
+                                            <td><strong>@string.Format("{0:N0}", itemTotal)₫</strong></td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Tổng Tiền -->
+                    <div class="total-section">
+                        
+                        <div class="total-row">
+                            <span>Tạm tính:</span>
+                            <span>@string.Format("{0:N0}", Model.TamTinh())₫</span>
+                        </div>
+                        <div class="total-row">
+                            <span>Giảm giá:</span>
+                            <span>@string.Format("{0:N0}", Model.Discount)₫</span>
+                        </div>
+                        <div class="total-row final">
+                            <span>Tổng cộng:</span>
+                            <span>@string.Format("{0:N0}", Model.ThanhTien())₫</span>
+                        </div>
+                    </div>
+
+                    <!-- Cập Nhật Trạng Thái -->
+                    <div class="status-select-group mt-4">
+                        <label>
+                            <i class="fas fa-edit"></i> Cập Nhật Trạng Thái Đơn Hàng
+                        </label>
+                        <select name="Status" class="form-select" required>
+                            <option value="Đang chờ xác nhận" @(Model.Status == "Đang chờ xác nhận" ? "selected" : "")>
+                                Đang chờ xác nhận
+                            </option>
+                            <option value="Đã xác nhận" @(Model.Status == "Đã xác nhận" ? "selected" : "")>
+                                Đã xác nhận
+                            </option>
+                            <option value="Đang giao" @(Model.Status == "Đang giao" ? "selected" : "")>
+                                Đang giao
+                            </option>
+                            <option value="Đã giao" @(Model.Status == "Đã giao" ? "selected" : "")>
+                                Đã giao
+                            </option>
+                            <option value="Đã hủy" @(Model.Status == "Đã hủy" ? "selected" : "")>
+                                Đã hủy
+                            </option>
+                        </select>
+                        <small class="text-muted mt-2 d-block">
+                            <i class="fas fa-info-circle"></i>
+                            Trạng thái hiện tại: <strong>@Model.Status</strong>
+                        </small>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times"></i> Đóng
+                    </button>
+                    <button type="submit" class="btn btn-update">
+                        <i class="fas fa-save"></i> Cập Nhật Trạng Thái
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
