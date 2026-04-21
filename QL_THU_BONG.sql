@@ -1,5 +1,5 @@
-﻿--CREATE DATABASE QL_THU_BONG
---USE QL_THU_BONG
+﻿CREATE DATABASE QL_THU_BONG
+USE QL_THU_BONG
 --drop database QL_THU_BONG
 
 --DROP TABLE IF EXISTS OrderDetail;
@@ -18,7 +18,7 @@
 --DROP TABLE IF EXISTS Product;
 --DROP TABLE IF EXISTS Category;
 --DROP TABLE IF EXISTS Roles;
-GO
+--GO
 
 go
 CREATE TABLE Category
@@ -218,7 +218,7 @@ values
 ('babythree', N'Gấu Bông Baby Three','gau-bong-baby-three-cosplay-shiba-5.jpg', 1, 'hoathinh'), --45
 ('haicau', N'Gấu Bông Hải Cẩu','gau-bong-hai-cau-sushi-trang-2.jpg', 1, 'thunhoibong')
 go 
-INSERT INTO Product
+INSERT INTO Product(ProductName)
 values
 (N'Gấu Bông Stitch Hồng lông Smooth'),
 (N'Gấu Bông Stitch Xanh cosplay Monster'),
@@ -485,7 +485,6 @@ values
 (52, 40, 288000, 4)
 
 go
-select * from ProductImages
 INSERT INTO ProductImages
 values
 (1, 'gau-bong-stitch-hong-1-768x768.jpg'),
@@ -614,7 +613,9 @@ values
 (52, 'gaubong-ong-tuan-loc-noel-goi-om-dut-tay-5-768x768.jpg')
 go
 
+select * from ProductImages
 go
+
 INSERT INTO Discount (ProductID, DiscountName, StartDate, EndDate, DiscountRate)
 VALUES
 (1, N'Giảm giá 20/11', GETDATE(), DATEADD(month, 1, GETDATE()), 15),
@@ -645,13 +646,14 @@ values
 ('admin'), --1
 ('user') --2
 go
+SELECT * FROM Roles
 
 go
-INSERT INTO Users
+INSERT INTO Users (Name,SDT, Password, Email, RoleID)
 values
-(1, N'Nguyễn Thành Tài', '0933733336', 'admin123', 'ntai8448@gmail.com'), --1
-(2, N'Bích Ngọc', '0123456789', 'ngoc123', 'ngoc22@gmail.com'), --2
-(2, N'Minh Nguyệt', '024681012', 'nguyet123', 'nguyet33@gmail.com') --3
+(N'Nguyễn Quang Phương Đông', '0337786086', 'admin123', 'dong2k5@gmail.com', 1), --1
+(N'Bích Ngọc', '0123456789', 'ngoc123', 'ngoc22@gmail.com', 2), --2
+(N'Minh Nguyệt', '024681012', 'nguyet123', 'nguyet33@gmail.com', 2) --3
 go
 SELECT * FROM Users
 
@@ -749,7 +751,6 @@ VALUES
 (49, 3, 4, N'Tiện, nhưng mền hơi nhỏ.', 40, GETDATE()),
 (51, 2, 5, N'Thơm, xịn, 2in1 quá tiện.', 35, GETDATE());
 go
-go
 --DELETE FROM RATING
 go
 SELECT * FROM Rating
@@ -769,9 +770,9 @@ select * from Product where ProductID = 1
 SP_ADDROLE N'Admin'
 ALTER ROLE db_owner ADD MEMBER [Admin];
 
-SP_ADDLOGIN 'tai', '123'
-SP_ADDUSER 'tai', 'tai'
-SP_ADDROLEMEMBER [Admin], 'tai'
+SP_ADDLOGIN 'dong', '123'
+SP_ADDUSER 'dong', 'dong'
+SP_ADDROLEMEMBER [Admin], 'dong'
 
 
 SP_ADDROLE 'Nhân viên'
