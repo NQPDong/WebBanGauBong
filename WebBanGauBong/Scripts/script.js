@@ -1,4 +1,4 @@
-﻿//Button back to top
+//Button back to top
 let mybutton = document.getElementById("btn-back-to-top");
 
 

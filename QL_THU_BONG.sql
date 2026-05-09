@@ -779,3 +779,35 @@ SP_ADDROLE 'Nhân viên'
 
 SELECT IS_ROLEMEMBER('Admin');
 
+-------THÊM CHAT--------
+-- Bảng ChatSession: Quản lý phiên chat của người dùng
+CREATE TABLE ChatSession 
+(
+    ChatSessionId INT IDENTITY(1,1) PRIMARY KEY,
+    SessionToken VARCHAR(100) NOT NULL UNIQUE,-- SessionToken dùng để theo dõi phiên chat (dùng GUID), giúp người dùng chưa đăng nhập cũng có thể duy trì cuộc hội thoại
+    UserID INT NULL, -- UserID có thể NULL nếu khách chưa đăng nhập
+    CreatedAt DATETIME DEFAULT GETDATE(), -- Thời điểm bắt đầu phiên chat
+    LastActivityAt DATETIME DEFAULT GETDATE(),-- Thời điểm tin nhắn cuối cùng (dùng để kiểm tra session hết hạn)
+    IsActive BIT DEFAULT 1, -- Trạng thái phiên: 1 = đang hoạt động, 0 = đã kết thúc
+    FOREIGN KEY (UserID) REFERENCES Users(UserID)
+)
+GO
+
+-- Bảng ChatMessage: Lưu từng tin nhắn trong phiên chat
+CREATE TABLE ChatMessage
+(
+    ChatMessageId INT IDENTITY(1,1) PRIMARY KEY,
+    ChatSessionId INT NOT NULL,
+    MessageContent NVARCHAR(MAX) NOT NULL, -- Nội dung 
+    -- Người gửi: 'Customer' = khách hàng, 'Bot' = chatbot AI
+    SenderType VARCHAR(20) NOT NULL CHECK (SenderType IN ('Customer', 'Bot')),
+    Timestamp DATETIME DEFAULT GETDATE(), -- Thời gian gửi tin nhắn
+    FOREIGN KEY (ChatSessionId) REFERENCES ChatSession(ChatSessionId)
+)
+GO
+
+-- Tạo Index để tăng tốc truy vấn lịch sử chat theo session
+CREATE INDEX IX_ChatMessage_SessionId ON ChatMessage(ChatSessionId)
+GO
+CREATE INDEX IX_ChatSession_Token ON ChatSession(SessionToken)
+GO

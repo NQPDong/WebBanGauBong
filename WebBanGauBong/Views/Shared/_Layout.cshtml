@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewBag.Title = "Gấu Bông Cao Cấp, Shop Gấu Bông Đẹp, Cao Cấp TP.HCM";
 }
 <!DOCTYPE html>
@@ -17,6 +17,7 @@
     <link href="~/Content/PagedList.css" rel="stylesheet" />
     <link href="~/Content/Site.css" rel="stylesheet" />
     <link href="~/Content/range_slider.css" rel="stylesheet" />
+    <link href="~/Content/chatbot.css" rel="stylesheet" />
 </head>
 <body>
     <ul class="notifications"></ul>
@@ -546,6 +547,10 @@
     <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
     <script src="~/Scripts/range_slider.js"></script>
     <script src="~/Scripts/script.js"></script>
+    <script src="~/Scripts/chatbot.js"></script>
+
+    @* Chatbot Widget - Hiển thị trên mọi trang *@
+    @Html.Partial("_ChatbotWidget")
 
     @RenderSection("scripts", required: false)
 

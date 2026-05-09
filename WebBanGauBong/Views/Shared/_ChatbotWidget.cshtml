@@ -1,0 +1,58 @@
+@*
+    CHATBOT WIDGET - Partial View
+
+*@
+
+@* --- Nút tròn mở chat (góc phải dưới) --- *@
+<button id="chatbot-toggle-btn" title="Chat với chúng tôi">
+    <i class="fa-solid fa-comments"></i>
+</button>
+
+@* --- Khung chat chính --- *@
+<div id="chatbot-widget">
+
+    @* Header *@
+    <div id="chatbot-header">
+        <div class="chat-info">
+            <div class="chat-avatar">🧸</div>
+            <div class="chat-title">
+                <h6>Gấu Bông Cao Cấp</h6>
+                <span>🟢 Trực tuyến</span>
+            </div>
+        </div>
+        <button id="chatbot-close-btn" title="Đóng">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
+
+    @* Khu vực hiển thị tin nhắn *@
+    <div id="chatbot-messages">
+        @* Tin nhắn chào mừng mặc định *@
+        <div class="chat-welcome">
+            <div class="welcome-icon">🧸</div>
+            <h6>Xin chào! 👋</h6>
+            <p>Mình là trợ lý ảo của Shop Gấu Bông Cao Cấp.<br />Bạn cần mình hỗ trợ gì nào?</p>
+        </div>
+    </div>
+
+    @* Gợi ý câu hỏi nhanh (Quick Replies) *@
+    <div class="quick-replies">
+        <button class="quick-reply-btn">Xem gấu bông hot 🔥</button>
+        <button class="quick-reply-btn">Gấu Teddy giá bao nhiêu?</button>
+        <button class="quick-reply-btn">Chính sách bảo hành</button>
+        <button class="quick-reply-btn">Liên hệ shop</button>
+    </div>
+
+    @* Khu vực nhập tin nhắn *@
+    <div id="chatbot-input-area">
+        <input type="text"
+               id="chatbot-input"
+               placeholder="Nhập tin nhắn..."
+               autocomplete="off"
+               maxlength="500" />
+        <button id="chatbot-send-btn" title="Gửi">
+            <i class="fa-solid fa-paper-plane"></i>
+        </button>
+    </div>
+
+</div>

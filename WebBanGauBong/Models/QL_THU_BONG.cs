@@ -25,9 +25,22 @@ namespace WebBanGauBong.Models
         public virtual DbSet<ShoppingCartItem> ShoppingCartItem { get; set; }
         public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
         public virtual DbSet<Users> Users { get; set; }
+        public virtual DbSet<ChatSession> ChatSession { get; set; }
+        public virtual DbSet<ChatMessage> ChatMessage { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
+            // Cấu hình bảng ChatSession
+            modelBuilder.Entity<ChatSession>()
+                .Property(e => e.SessionToken)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<ChatSession>()
+                .HasMany(e => e.ChatMessages)
+                .WithRequired(e => e.ChatSession)
+                .WillCascadeOnDelete(true);
+
+
             modelBuilder.Entity<Category>()
                 .Property(e => e.CategoryID)
                 .IsUnicode(false);
