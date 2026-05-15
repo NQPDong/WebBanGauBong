@@ -7,13 +7,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Configuration;
 using WebBanGauBong.Models;
 
 namespace WebBanGauBong.Services
 {
     public class ChatbotService
     {
-        private static readonly string GEMINI_API_KEY = "AIzaSyA7BsqfcqOPGANEqD0KVx8KHcHAot-tgTQ";
+        private static readonly string GEMINI_API_KEY = ConfigurationManager.AppSettings["GeminiApiKey"];
 
         private static readonly string GEMINI_API_URL =
             "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + GEMINI_API_KEY;

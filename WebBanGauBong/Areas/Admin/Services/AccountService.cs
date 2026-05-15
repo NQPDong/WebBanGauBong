@@ -42,8 +42,8 @@ namespace WebBanGauBong.Areas.Admin.Services
 
         public bool Connect(string username, string password, string role)
         {
-            //string connStr = $"workstation id = QL_THU_BONG.mssql.somee.com; packet size = 4096; user id = {username}; pwd = {password}; data source = QL_THU_BONG.mssql.somee.com; persist security info = False; initial catalog = QL_THU_BONG; TrustServerCertificate = True";
-            string connStr = $"Data Source=.; Initial Catalog=QL_THU_BONG; User Id={username}; Password={password}; Encrypt=False; MultipleActiveResultSets=True;  ";
+            string connStr = $"workstation id=QL_THU_BONG.mssql.somee.com;packet size=4096;user id={username};pwd={password};data source=QL_THU_BONG.mssql.somee.com;persist security info=False;initial catalog=QL_THU_BONG;TrustServerCertificate=True";
+            //string connStr = $"Data Source=.; Initial Catalog=QL_THU_BONG; User Id={username}; Password={password}; Encrypt=False; MultipleActiveResultSets=True;  ";
             try
             {
                 using (SqlConnection conn = new SqlConnection(connStr))
